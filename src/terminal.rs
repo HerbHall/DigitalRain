@@ -3,7 +3,7 @@
 //! Handles switching to the alternate screen buffer, enabling raw mode,
 //! hiding the cursor, and restoring everything on exit (including panics).
 
-use std::io::{self, Write};
+use std::io;
 
 use crossterm::{
     cursor,
@@ -78,10 +78,6 @@ impl Terminal {
         )
     }
 
-    /// Flush stdout to ensure all queued commands are sent to the terminal.
-    pub fn flush() -> io::Result<()> {
-        io::stdout().flush()
-    }
 }
 
 impl Drop for Terminal {

@@ -58,6 +58,7 @@ Press `q`, `Esc`, or `Ctrl+C` to quit. Press `?` while running to show the keybi
 | `--list-colors` | | List available palettes | |
 | `--list-charsets` | | List available character sets | |
 | `--random` | | Random effect and parameters | |
+| `--timer <seconds>` | | Auto-cycle to random effect every N seconds | |
 | `--help` | `-h` | Show help | |
 | `--version` | `-V` | Show version | |
 
@@ -103,6 +104,9 @@ digital_rain --color purple --fps 60
 
 # Fully randomized effect and parameters
 digital_rain --random
+
+# Auto-cycle: randomize every 30 seconds
+digital_rain --random --timer 30
 ```
 
 ### Interactive Controls
@@ -118,6 +122,7 @@ While running, use these keys to adjust the rain in real-time:
 | `[` | Density down (0.2x per press) |
 | `n` | Next effect |
 | `r` | Randomize (effect, palette, speed) |
+| `t` | Toggle auto-cycle timer (requires `--timer`) |
 | `?` | Toggle keybindings help overlay |
 | `q` / `Esc` | Quit |
 
@@ -132,6 +137,12 @@ Speed and density are clamped to the range 0.1x - 10.0x. Status messages appear 
 - Effect transitions (smooth crossfade between effects)
 
 ## Version History
+
+### v0.3.1 - Auto-Cycle Timer
+- `--timer <seconds>` flag to auto-randomize effect at a configurable interval
+- `t` key to toggle auto-cycle on/off at runtime
+- Timer pauses when animation is paused (Space key)
+- Manual randomize (`r`) resets the timer countdown
 
 ### v0.3.0 - Interactive Controls & Polish
 - Pause/resume with Space key

@@ -14,6 +14,7 @@ use crate::buffer::ScreenBuffer;
 /// to draw into the screen buffer.
 pub trait Effect {
     /// Human-readable name for display and CLI selection.
+    #[allow(dead_code)] // part of Effect API, will be used for UI/logging
     fn name(&self) -> &str;
 
     /// Advance the effect's state by one frame.

@@ -37,12 +37,13 @@ pub fn render_help(buffer: &mut ScreenBuffer) {
         "  [  ]      Density down / up",
         "  n         Next effect",
         "  r         Randomize",
+        "  t         Toggle auto-cycle timer",
         "  ?         Toggle this help",
         "  q / Esc   Quit",
         "",
     ];
 
-    let box_width = 34u16;
+    let box_width = 38u16;
     let box_height = lines.len() as u16;
 
     let buf_w = buffer.width();

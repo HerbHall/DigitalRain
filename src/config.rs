@@ -49,6 +49,10 @@ pub struct Cli {
     /// Pick a random effect with random parameters
     #[arg(long)]
     pub random: bool,
+
+    /// Auto-cycle to a random effect every N seconds (e.g. --timer 30)
+    #[arg(long, value_parser = clap::value_parser!(f64))]
+    pub timer: Option<f64>,
 }
 
 /// Runtime configuration derived from CLI arguments.
@@ -60,6 +64,7 @@ pub struct Config {
     pub palette_name: String,
     pub charset_name: String,
     pub target_fps: u32,
+    pub auto_cycle_secs: Option<f64>,
 }
 
 impl Config {
@@ -72,6 +77,7 @@ impl Config {
             palette_name: cli.color.clone(),
             charset_name: cli.charset.clone(),
             target_fps: cli.fps.clamp(10, 120),
+            auto_cycle_secs: cli.timer.map(|t| t.max(1.0)),
         }
     }
 
@@ -91,6 +97,7 @@ impl Config {
             palette_name: palettes[rng.random_range(0..palettes.len())].to_string(),
             charset_name: charsets[rng.random_range(0..charsets.len())].to_string(),
             target_fps: 30,
+            auto_cycle_secs: None,
         }
     }
 }

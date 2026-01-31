@@ -11,12 +11,6 @@ pub struct ClassicRain {
 }
 
 impl ClassicRain {
-    pub fn new(width: u16, height: u16) -> Self {
-        Self {
-            rain: RainField::new(width, height),
-        }
-    }
-
     pub fn with_config(width: u16, height: u16, config: &Config) -> Self {
         Self {
             rain: RainField::with_config(width, height, config),

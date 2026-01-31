@@ -26,19 +26,6 @@ pub struct RainField {
 }
 
 impl RainField {
-    /// Create a new rain field with default settings.
-    pub fn new(width: u16, height: u16) -> Self {
-        Self {
-            columns: Vec::new(),
-            char_pool: CharacterPool::matrix(),
-            palette: Palette::classic(),
-            width,
-            height,
-            spawn_rate: 0.15,
-            speed_multiplier: 1.0,
-        }
-    }
-
     /// Create a new rain field from a Config.
     pub fn with_config(width: u16, height: u16, config: &Config) -> Self {
         Self {

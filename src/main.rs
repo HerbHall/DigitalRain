@@ -88,6 +88,11 @@ fn main() {
     let mut status_message: Option<String> = None;
     let mut status_frames_remaining: u32 = 0;
 
+    // Auto-cycle timer state
+    let mut auto_cycle_enabled = config.auto_cycle_secs.is_some();
+    let auto_cycle_interval = config.auto_cycle_secs;
+    let mut auto_cycle_elapsed: f64 = 0.0;
+
     // Main loop: poll events, update, render
     loop {
         match term.poll_event(clock.poll_timeout()) {
@@ -186,6 +191,8 @@ fn main() {
                             ) {
                                 effect = new_effect;
                             }
+                            // Reset auto-cycle timer so it counts from the new effect
+                            auto_cycle_elapsed = 0.0;
                             set_status(
                                 &mut status_message,
                                 &mut status_frames_remaining,
@@ -196,6 +203,29 @@ fn main() {
                                     config.speed_multiplier,
                                 ),
                             );
+                        }
+
+                        // Toggle auto-cycle timer
+                        KeyCode::Char('t') => {
+                            if auto_cycle_interval.is_some() {
+                                auto_cycle_enabled = !auto_cycle_enabled;
+                                auto_cycle_elapsed = 0.0;
+                                set_status(
+                                    &mut status_message,
+                                    &mut status_frames_remaining,
+                                    if auto_cycle_enabled {
+                                        "Auto-cycle: ON"
+                                    } else {
+                                        "Auto-cycle: OFF"
+                                    },
+                                );
+                            } else {
+                                set_status(
+                                    &mut status_message,
+                                    &mut status_frames_remaining,
+                                    "Auto-cycle: use --timer to enable",
+                                );
+                            }
                         }
 
                         // Toggle help overlay
@@ -218,6 +248,35 @@ fn main() {
         // Update the effect (skip when paused)
         if !paused {
             effect.update(clock.delta_time());
+
+            // Auto-cycle: accumulate time and randomize when interval reached
+            if auto_cycle_enabled
+                && let Some(interval) = auto_cycle_interval
+            {
+                auto_cycle_elapsed += clock.delta_time();
+                if auto_cycle_elapsed >= interval {
+                    auto_cycle_elapsed = 0.0;
+                    config = Config::randomized();
+                    if let Some(new_effect) = registry::create_effect(
+                        &config.effect_name,
+                        term.width,
+                        term.height,
+                        &config,
+                    ) {
+                        effect = new_effect;
+                    }
+                    set_status(
+                        &mut status_message,
+                        &mut status_frames_remaining,
+                        &format!(
+                            "Auto: {} / {} / {:.1}x",
+                            config.effect_name,
+                            config.palette_name,
+                            config.speed_multiplier,
+                        ),
+                    );
+                }
+            }
         }
 
         // Render

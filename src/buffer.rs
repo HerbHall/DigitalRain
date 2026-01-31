@@ -81,6 +81,7 @@ impl ScreenBuffer {
     }
 
     /// Get a cell at the given coordinates. Returns None if out of bounds.
+    #[allow(dead_code)] // used in tests
     pub fn get_cell(&self, x: u16, y: u16) -> Option<&Cell> {
         if x < self.width && y < self.height {
             let idx = (y as usize) * (self.width as usize) + (x as usize);
