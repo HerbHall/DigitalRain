@@ -23,7 +23,7 @@ Features true-color gradient trails, film-authentic katakana characters, gold hi
 Requires [Rust](https://rustup.rs/) 1.85+.
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/DigitalRain.git
+git clone https://github.com/HerbHall/DigitalRain.git
 cd DigitalRain
 cargo build --release
 ```

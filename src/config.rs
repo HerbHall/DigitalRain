@@ -53,6 +53,10 @@ pub struct Cli {
     /// Auto-cycle to a random effect every N seconds (e.g. --timer 30)
     #[arg(long, value_parser = clap::value_parser!(f64))]
     pub timer: Option<f64>,
+
+    /// Reverse gradient direction (bright head at bottom, dim tail at top)
+    #[arg(long)]
+    pub reverse: bool,
 }
 
 /// Runtime configuration derived from CLI arguments.
@@ -65,6 +69,7 @@ pub struct Config {
     pub charset_name: String,
     pub target_fps: u32,
     pub auto_cycle_secs: Option<f64>,
+    pub reverse: bool,
 }
 
 impl Config {
@@ -78,6 +83,7 @@ impl Config {
             charset_name: cli.charset.clone(),
             target_fps: cli.fps.clamp(10, 120),
             auto_cycle_secs: cli.timer.map(|t| t.max(1.0)),
+            reverse: cli.reverse,
         }
     }
 
@@ -98,6 +104,7 @@ impl Config {
             charset_name: charsets[rng.random_range(0..charsets.len())].to_string(),
             target_fps: 30,
             auto_cycle_secs: None,
+            reverse: false,
         }
     }
 }

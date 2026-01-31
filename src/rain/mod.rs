@@ -23,6 +23,8 @@ pub struct RainField {
     spawn_rate: f64,
     /// Speed multiplier applied to all column speeds
     speed_multiplier: f64,
+    /// When true, gradient is bright at head (bottom) and dim at tail (top)
+    reverse: bool,
 }
 
 impl RainField {
@@ -36,6 +38,7 @@ impl RainField {
             height,
             spawn_rate: 0.15 * config.density_multiplier,
             speed_multiplier: config.speed_multiplier,
+            reverse: config.reverse,
         }
     }
 
@@ -108,8 +111,15 @@ impl RainField {
                 continue;
             }
 
-            // Position in trail: 0.0 = head (newest), 1.0 = tail (oldest)
-            let position = i as f32 / trail_len.max(1) as f32;
+            // Position in gradient: 0.0 = brightest (head), 1.0 = dimmest (tail)
+            // Index 0 = oldest (top of screen), last index = newest (bottom/head)
+            let position = if self.reverse {
+                // Reverse: head (last index) is brightest
+                (trail_len - 1 - i) as f32 / trail_len.max(1) as f32
+            } else {
+                // Default: tail (first index) is brightest
+                i as f32 / trail_len.max(1) as f32
+            };
 
             let fg = if col.highlight_positions.contains(&i) {
                 self.palette.highlight

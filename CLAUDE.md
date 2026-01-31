@@ -57,3 +57,5 @@ src/
 - keep Readme.md file updated for GitHub repo
 - Maintain documentation with version history and updated command usage.
 - implement tests for debuging
+- Commit to GitHub after successful build.
+- Start a new github branch before implementing new features or making large changes to the core.
