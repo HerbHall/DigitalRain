@@ -4,6 +4,7 @@
 //! update() and render() on the active effect each frame.
 
 pub mod classic;
+pub mod registry;
 
 use crate::buffer::ScreenBuffer;
 

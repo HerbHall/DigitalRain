@@ -5,29 +5,28 @@ pub mod column;
 
 use rand::Rng;
 
-use self::chars::CharacterPool;
+use self::chars::{CharacterPool, charset_by_name};
 use self::column::RainColumn;
 use crate::buffer::ScreenBuffer;
 use crate::color::gradient::trail_color;
-use crate::color::palette::Palette;
+use crate::color::palette::{Palette, palette_by_name};
+use crate::config::Config;
 
 /// Manages the full rain simulation across all columns of the screen.
 pub struct RainField {
-    /// One column state per screen column
     columns: Vec<RainColumn>,
-    /// Character pool for random character selection
     char_pool: CharacterPool,
-    /// Color palette
     palette: Palette,
-    /// Screen dimensions
     width: u16,
     height: u16,
-    /// Density: probability (0.0-1.0) that a new column spawns per frame
+    /// Base spawn rate before density multiplier
     spawn_rate: f64,
+    /// Speed multiplier applied to all column speeds
+    speed_multiplier: f64,
 }
 
 impl RainField {
-    /// Create a new rain field covering the screen.
+    /// Create a new rain field with default settings.
     pub fn new(width: u16, height: u16) -> Self {
         Self {
             columns: Vec::new(),
@@ -36,6 +35,20 @@ impl RainField {
             width,
             height,
             spawn_rate: 0.15,
+            speed_multiplier: 1.0,
+        }
+    }
+
+    /// Create a new rain field from a Config.
+    pub fn with_config(width: u16, height: u16, config: &Config) -> Self {
+        Self {
+            columns: Vec::new(),
+            char_pool: charset_by_name(&config.charset_name),
+            palette: palette_by_name(&config.palette_name),
+            width,
+            height,
+            spawn_rate: 0.15 * config.density_multiplier,
+            speed_multiplier: config.speed_multiplier,
         }
     }
 
@@ -43,7 +56,6 @@ impl RainField {
     pub fn resize(&mut self, width: u16, height: u16) {
         self.width = width;
         self.height = height;
-        // Remove columns that are now out of bounds
         self.columns.retain(|c| c.x < width);
     }
 
@@ -51,17 +63,19 @@ impl RainField {
     pub fn update(&mut self, delta_time: f64) {
         let mut rng = rand::rng();
 
+        // Apply speed multiplier to the effective delta time
+        let effective_dt = delta_time * self.speed_multiplier;
+
         // Update existing columns, removing any that have fully scrolled off
         self.columns.retain_mut(|col| {
-            col.update(delta_time, self.height, &self.char_pool, &mut rng);
+            col.update(effective_dt, self.height, &self.char_pool, &mut rng);
             !col.is_dead(self.height)
         });
 
         // Spawn new columns randomly
         for x in 0..self.width {
-            // Only spawn if there isn't already an active column at this x
             let has_column = self.columns.iter().any(|c| c.x == x && !c.is_fading());
-            if !has_column && rng.random_bool(self.spawn_rate * delta_time) {
+            if !has_column && rng.random_bool((self.spawn_rate * delta_time).min(1.0)) {
                 self.columns
                     .push(RainColumn::spawn(x, self.height, &mut rng));
             }
@@ -90,7 +104,6 @@ impl RainField {
             // Position in trail: 0.0 = head (newest), 1.0 = tail (oldest)
             let position = i as f32 / trail_len.max(1) as f32;
 
-            // Check if this character is a gold highlight
             let fg = if col.highlight_positions.contains(&i) {
                 self.palette.highlight
             } else {

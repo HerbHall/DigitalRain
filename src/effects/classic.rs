@@ -2,6 +2,7 @@
 
 use super::Effect;
 use crate::buffer::ScreenBuffer;
+use crate::config::Config;
 use crate::rain::RainField;
 
 /// The classic Matrix digital rain effect.
@@ -13,6 +14,12 @@ impl ClassicRain {
     pub fn new(width: u16, height: u16) -> Self {
         Self {
             rain: RainField::new(width, height),
+        }
+    }
+
+    pub fn with_config(width: u16, height: u16, config: &Config) -> Self {
+        Self {
+            rain: RainField::with_config(width, height, config),
         }
     }
 }

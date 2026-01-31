@@ -54,3 +54,5 @@ src/
 - Keep code well-commented (developer is learning Rust)
 - Prefer clarity over cleverness
 - Use `cargo clippy` and `cargo fmt` before committing
+- keep Readme.md file updated for GitHub repo
+- Maintain documentation with version history and updated command usage. 
