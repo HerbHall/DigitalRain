@@ -1,0 +1,159 @@
+DIGITAL_RAIN(1)                  User Commands                  DIGITAL_RAIN(1)
+
+NAME
+       digital_rain - terminal-based Matrix digital rain effect
+
+SYNOPSIS
+       digital_rain [OPTIONS]
+
+DESCRIPTION
+       Renders the iconic Matrix falling-characters effect in your terminal.
+       Features true-color gradient trails, film-authentic half-width katakana
+       characters, gold highlights, character mutation, and multiple visual
+       effects.
+
+       By default the gradient renders bright at the falling head (bottom)
+       fading to dim at the trail (top), matching the classic Matrix films.
+
+       Requires a terminal with true-color (24-bit RGB) support for best
+       results. Windows Terminal, PowerShell, and most modern Linux/macOS
+       terminals are supported.
+
+OPTIONS
+   Display
+       -e, --effect <EFFECT>
+              Visual effect to display. Use --list-effects to see available
+              effects. Default: classic
+
+       -c, --color <PALETTE>
+              Color palette for the rain. Use --list-colors to see available
+              palettes. Default: classic
+
+       --charset <CHARSET>
+              Character set to use. Use --list-charsets to see available sets.
+              Default: matrix
+
+       --forward
+              Use forward gradient direction (bright tail at top, dim head at
+              bottom). Without this flag the default is the classic Matrix
+              look with the bright head at the bottom.
+
+   Tuning
+       -s, --speed <SPEED>
+              Animation speed multiplier. Range: 0.1 (slow) to 10.0 (fast).
+              Default: 1.0
+
+       -d, --density <DENSITY>
+              Rain column density. Range: 0.1 (sparse) to 10.0 (heavy).
+              Default: 1.0
+
+       --fps <FPS>
+              Target frames per second. Range: 10 to 120. Default: 30
+
+   Randomization
+       --random
+              Start with a random effect, palette, charset, speed, and
+              density. Gradient direction is not randomized.
+
+       --timer <SECONDS>
+              Auto-cycle to a new random configuration every SECONDS seconds.
+              Minimum: 1.0. Combine with --random for a fully randomized
+              screensaver experience. The timer pauses when the animation
+              is paused.
+
+   Informational
+       --list-effects
+              Print available effects and exit.
+
+       --list-colors
+              Print available color palettes and exit.
+
+       --list-charsets
+              Print available character sets and exit.
+
+       -h, --help
+              Print help message and exit.
+
+       -V, --version
+              Print version and exit.
+
+INTERACTIVE CONTROLS
+       The following keys are active while the effect is running:
+
+       Space        Pause / Resume the animation
+       + or =       Increase speed by 0.2x (max 10.0x)
+       -            Decrease speed by 0.2x (min 0.1x)
+       ]            Increase density by 0.2x (max 10.0x)
+       [            Decrease density by 0.2x (min 0.1x)
+       n            Cycle to the next effect
+       r            Randomize effect, palette, charset, speed, and density
+       t            Toggle auto-cycle timer on/off (default interval: 30s)
+       ?            Toggle keybindings help overlay
+       q, Esc       Quit
+
+       Speed and density adjustments are clamped to the range 0.1x - 10.0x.
+       A brief status message appears at the bottom of the screen when a
+       parameter changes.
+
+EFFECTS
+       classic      Classic Matrix digital rain
+
+       Additional effects are planned: cascade, pulse, glitch, binary, fire,
+       ocean.
+
+COLOR PALETTES
+       classic      Green phosphor (the Matrix default)
+       gold         Warm amber/gold CRT feel
+       cyan         Cold ice-blue digital
+       red          Crimson danger/alert
+       monochrome   White/grey on black
+       purple       Violet synthwave
+
+CHARACTER SETS
+       matrix       Half-width katakana + digits + symbols (film-authentic)
+       ascii        Full printable ASCII characters
+       binary       0 and 1 only
+       digits       0-9 only
+       katakana     Half-width katakana only
+       latin        A-Z, a-z letters
+
+EXAMPLES
+       Run with default settings (classic green Matrix rain):
+              digital_rain
+
+       Red rain at double speed with sparse density:
+              digital_rain --color red --speed 2.0 --density 0.5
+
+       Binary rain in cyan:
+              digital_rain --charset binary --color cyan
+
+       Slow gold rain, heavy density:
+              digital_rain --color gold --speed 0.5 --density 2.0
+
+       Purple synthwave at 60fps:
+              digital_rain --color purple --fps 60
+
+       Forward gradient (bright tail at top):
+              digital_rain --forward
+
+       Fully randomized:
+              digital_rain --random
+
+       Auto-cycle every 30 seconds:
+              digital_rain --random --timer 30
+
+       Randomized with forward gradient preserved across cycles:
+              digital_rain --random --timer 30 --forward
+
+EXIT STATUS
+       0      Normal exit (user pressed q, Esc, or Ctrl+C)
+       1      Terminal initialization failure
+
+ENVIRONMENT
+       No environment variables are used. Terminal capabilities are detected
+       automatically via crossterm.
+
+AUTHORS
+       HerbHall <https://github.com/HerbHall/DigitalRain>
+
+digital_rain 0.1.0                 2025                         DIGITAL_RAIN(1)
