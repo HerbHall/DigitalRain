@@ -13,6 +13,7 @@ mod overlay;
 mod rain;
 mod terminal;
 mod timing;
+mod transition;
 
 use clap::Parser;
 use crossterm::event::{Event, KeyCode, KeyEvent, KeyEventKind};
@@ -23,6 +24,7 @@ use crt::CrtFilter;
 use effects::registry;
 use terminal::Terminal;
 use timing::FrameClock;
+use transition::Transition;
 
 /// How many frames to show the status message after a parameter change.
 const STATUS_DISPLAY_FRAMES: u32 = 60;
@@ -48,8 +50,25 @@ fn main() {
         registry::print_charsets();
         return;
     }
+    if cli.list_presets {
+        config::print_presets(&cli);
+        return;
+    }
 
-    // Build config from CLI args (or randomize if --random)
+    // Handle --save-preset (save and exit)
+    if let Some(ref name) = cli.save_preset {
+        match config::save_preset(&cli, name) {
+            Ok(path) => {
+                println!("Preset '{}' saved to {}", name, path.display());
+            }
+            Err(e) => {
+                eprintln!("Error saving preset: {}", e);
+            }
+        }
+        return;
+    }
+
+    // Build config from CLI args + config file + preset (or randomize if --random)
     // When randomizing, carry over CLI flags that shouldn't be randomized
     // (timer, forward direction, CRT settings).
     let mut config = if cli.random {
@@ -57,7 +76,7 @@ fn main() {
         c.forward = cli.forward;
         c.auto_cycle_secs = cli.timer.map(|t| t.max(1.0));
         c.crt_enabled = cli.crt;
-        c.crt_intensity = cli.crt_intensity.clamp(0.0, 1.0);
+        c.crt_intensity = cli.crt_intensity.unwrap_or(0.7).clamp(0.0, 1.0);
         c
     } else {
         Config::from_cli(&cli)
@@ -111,6 +130,10 @@ fn main() {
     let mut auto_cycle_interval = config.auto_cycle_secs;
     let mut auto_cycle_elapsed: f64 = 0.0;
 
+    // Crossfade transition state (None when no transition is active)
+    const TRANSITION_DURATION: f64 = 0.75;
+    let mut active_transition: Option<Transition> = None;
+
     // Main loop: poll events, update, render
     loop {
         match term.poll_event(clock.poll_timeout()) {
@@ -124,6 +147,9 @@ fn main() {
                     buffer.resize(term.width, term.height);
                     effect.resize(term.width, term.height);
                     crt_filter.resize(term.width, term.height);
+                    if let Some(ref mut t) = active_transition {
+                        t.resize(term.width, term.height);
+                    }
                 }
 
                 // Handle interactive key controls (Press only — ignore Release/Repeat
@@ -189,14 +215,20 @@ fn main() {
                             );
                         }
 
-                        // Next effect
+                        // Next effect (with crossfade transition)
                         KeyCode::Char('n') => {
                             let next_name = registry::next_effect_name(&config.effect_name);
                             config.effect_name = next_name.to_string();
                             if let Some(new_effect) =
                                 registry::create_effect(next_name, term.width, term.height, &config)
                             {
-                                effect = new_effect;
+                                let old_effect = std::mem::replace(&mut effect, new_effect);
+                                active_transition = Some(Transition::new(
+                                    old_effect,
+                                    term.width,
+                                    term.height,
+                                    TRANSITION_DURATION,
+                                ));
                             }
                             set_status(
                                 &mut status_message,
@@ -205,7 +237,7 @@ fn main() {
                             );
                         }
 
-                        // Randomize
+                        // Randomize (with crossfade transition)
                         KeyCode::Char('r') => {
                             let forward = config.forward;
                             config = Config::randomized();
@@ -217,7 +249,13 @@ fn main() {
                                 term.height,
                                 &config,
                             ) {
-                                effect = new_effect;
+                                let old_effect = std::mem::replace(&mut effect, new_effect);
+                                active_transition = Some(Transition::new(
+                                    old_effect,
+                                    term.width,
+                                    term.height,
+                                    TRANSITION_DURATION,
+                                ));
                             }
                             // Reset auto-cycle timer so it counts from the new effect
                             auto_cycle_elapsed = 0.0;
@@ -295,7 +333,13 @@ fn main() {
                         term.height,
                         &config,
                     ) {
-                        effect = new_effect;
+                        let old_effect = std::mem::replace(&mut effect, new_effect);
+                        active_transition = Some(Transition::new(
+                            old_effect,
+                            term.width,
+                            term.height,
+                            TRANSITION_DURATION,
+                        ));
                     }
                     set_status(
                         &mut status_message,
@@ -307,11 +351,24 @@ fn main() {
                     );
                 }
             }
+
+            // Update transition (fade out outgoing effect)
+            if let Some(ref mut t) = active_transition {
+                t.update(clock.delta_time());
+                if t.is_complete() {
+                    active_transition = None;
+                }
+            }
         }
 
         // Render
         buffer.clear();
         effect.render(&mut buffer);
+
+        // Blend outgoing effect during crossfade transition
+        if let Some(ref mut t) = active_transition {
+            t.render(&mut buffer);
+        }
 
         // CRT post-processing (before overlays so help/status text stays crisp)
         crt_filter.apply(&mut buffer, clock.delta_time());

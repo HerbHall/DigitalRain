@@ -24,6 +24,7 @@ pub fn palette_by_name(name: &str) -> Palette {
 }
 
 /// A color palette defines the colors used for a rain effect.
+#[derive(Clone)]
 pub struct Palette {
     /// The bright leading character color (head of the rain column)
     pub head: Color,

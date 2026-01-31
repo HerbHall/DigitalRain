@@ -19,7 +19,7 @@ use crossterm::style::Color;
 use rand::Rng;
 
 use crate::buffer::ScreenBuffer;
-use crate::color::gradient::color_to_rgb;
+use crate::color::gradient::{color_to_rgb, scale_color};
 
 /// Characters used for noise corruption -- chosen to look like analog glitches.
 const NOISE_CHARS: &[char] = &['#', '%', '&', '@', '!', '/', '\\', '|', '.', ':'];
@@ -249,20 +249,7 @@ impl CrtFilter {
     }
 }
 
-/// Scale an RGB color's brightness by a factor.
-///
-/// Non-RGB colors (like Color::Reset) pass through unchanged.
-/// Values are clamped to 0-255 to prevent overflow.
-fn scale_color(color: Color, factor: f64) -> Color {
-    match color {
-        Color::Rgb { r, g, b } => Color::Rgb {
-            r: (r as f64 * factor).round().clamp(0.0, 255.0) as u8,
-            g: (g as f64 * factor).round().clamp(0.0, 255.0) as u8,
-            b: (b as f64 * factor).round().clamp(0.0, 255.0) as u8,
-        },
-        other => other,
-    }
-}
+// scale_color is now imported from crate::color::gradient
 
 #[cfg(test)]
 mod tests {

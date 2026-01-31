@@ -59,6 +59,21 @@ OPTIONS
        --fps <FPS>
               Target frames per second. Range: 10 to 120. Default: 30
 
+   Configuration
+       --config <PATH>
+              Path to TOML configuration file. Default platform locations:
+              Windows: %APPDATA%\digitalrain\config.toml
+              Linux:   ~/.config/digitalrain/config.toml
+              macOS:   ~/Library/Application Support/digitalrain/config.toml
+
+       --preset <NAME>
+              Load a named preset from the config file. CLI flags override
+              preset values.
+
+       --save-preset <NAME>
+              Save the current CLI arguments as a named preset to the config
+              file, then exit. Creates the config file/directory if needed.
+
    Randomization
        --random
               Start with a random effect, palette, charset, speed, and
@@ -80,6 +95,9 @@ OPTIONS
        --list-charsets
               Print available character sets and exit.
 
+       --list-presets
+              Print available presets from the config file and exit.
+
        -h, --help
               Print help message and exit.
 
@@ -94,8 +112,9 @@ INTERACTIVE CONTROLS
        -            Decrease speed by 0.2x (min 0.1x)
        ]            Increase density by 0.2x (max 10.0x)
        [            Decrease density by 0.2x (min 0.1x)
-       n            Cycle to the next effect
+       n            Cycle to the next effect (with crossfade transition)
        r            Randomize effect, palette, charset, speed, and density
+                    (with crossfade transition)
        t            Toggle auto-cycle timer on/off (default interval: 30s)
        c            Toggle CRT simulation on/off
        ?            Toggle keybindings help overlay
@@ -107,9 +126,13 @@ INTERACTIVE CONTROLS
 
 EFFECTS
        classic      Classic Matrix digital rain
-
-       Additional effects are planned: cascade, pulse, glitch, binary, fire,
-       ocean.
+       binary       Dense binary 0/1 data stream
+       cascade      Wave-front column spawning (curtain effect)
+       pulse        Rain with brightness wave overlay
+       glitch       Rain with digital corruption events
+       fire         Classic cellular automata fire simulation
+       ocean        Sine-wave water surface simulation
+       parallax     Multi-layer rain with depth (foreground/background)
 
 COLOR PALETTES
        classic      Green phosphor (the Matrix default)
@@ -164,6 +187,51 @@ EXAMPLES
        Heavy CRT with gold palette:
               digital_rain --crt --crt-intensity 1.0 --color gold
 
+       Fire effect:
+              digital_rain -e fire
+
+       Ocean waves:
+              digital_rain -e ocean
+
+       Glitch rain with purple synthwave:
+              digital_rain -e glitch -c purple --crt
+
+       Parallax depth layers:
+              digital_rain -e parallax
+
+       Save a preset:
+              digital_rain --save-preset cyberpunk -e glitch -c purple --crt -s 1.5
+
+       Load a preset:
+              digital_rain --preset cyberpunk
+
+       Load a preset but override speed:
+              digital_rain --preset cyberpunk -s 3.0
+
+CONFIGURATION FILE
+       DigitalRain supports a TOML configuration file with default settings
+       and named presets. Priority: CLI flags > preset > defaults > hardcoded.
+
+       Example config.toml:
+
+              [defaults]
+              effect = "classic"
+              speed = 1.0
+              color = "classic"
+              crt = false
+
+              [presets.cyberpunk]
+              effect = "glitch"
+              color = "purple"
+              speed = 1.5
+              crt = true
+
+              [presets.retro]
+              effect = "classic"
+              color = "gold"
+              crt = true
+              crt_intensity = 1.0
+
 EXIT STATUS
        0      Normal exit (user pressed q, Esc, or Ctrl+C)
        1      Terminal initialization failure
@@ -175,4 +243,7 @@ ENVIRONMENT
 AUTHORS
        HerbHall <https://github.com/HerbHall/DigitalRain>
 
-digital_rain 0.1.0                 2025                         DIGITAL_RAIN(1)
+       DIGITAL_RAIN_CONFIG
+              If set, overrides the default config file path.
+
+digital_rain 0.6.0                 2026                         DIGITAL_RAIN(1)

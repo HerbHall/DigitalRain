@@ -9,6 +9,8 @@ Classic green phosphor CRT aesthetic with gold highlight characters.
 - **Terminal**: crossterm (cross-platform, Windows-first)
 - **CLI**: clap (argument parsing)
 - **RNG**: rand (character selection, timing)
+- **Config**: toml + serde (TOML configuration file with presets)
+- **Platform**: dirs (platform-native config directory)
 
 ## Architecture
 - Effect trait system: each visual effect implements a common `Effect` trait
@@ -31,22 +33,31 @@ cargo run -- --help
 ## Project Structure
 ```
 src/
-  main.rs           - Entry point, CLI args, main loop
+  main.rs           - Entry point, CLI args, main loop, crossfade wiring
   terminal.rs       - crossterm setup/teardown, raw mode, alternate screen
   buffer.rs         - 2D cell buffer (char + fg/bg color per cell)
   timing.rs         - Frame timing, FPS control, delta time
-  config.rs         - Configuration structs, TOML loading, CLI mapping
+  config.rs         - CLI parsing, TOML config file, presets, resolution
   crt.rs            - CRT monitor simulation post-processing filter
+  transition.rs     - Crossfade transitions between effects
+  overlay.rs        - Help and status message overlays
   color/
     mod.rs          - Color types and utilities
     palette.rs      - Named color palettes (classic, gold, custom)
-    gradient.rs     - Linear interpolation for trail fading
+    gradient.rs     - Linear interpolation for trail fading, scale_color
   effects/
-    mod.rs          - Effect trait, registry, effect selection
+    mod.rs          - Effect trait definition
+    registry.rs     - Effect discovery, creation, and listing
     classic.rs      - Classic Matrix rain
-    (future effects added here)
+    binary.rs       - Dense binary 0/1 data stream
+    cascade.rs      - Wave-front column spawning
+    pulse.rs        - Rain with brightness wave overlay
+    glitch.rs       - Rain with digital corruption events
+    fire.rs         - Cellular automata fire simulation
+    ocean.rs        - Sine-wave water surface simulation
+    parallax.rs     - Multi-layer rain with depth
   rain/
-    mod.rs          - Rain simulation coordinator
+    mod.rs          - Rain simulation coordinator, render_rain_column()
     column.rs       - Individual rain column state
     chars.rs        - Character set definitions (katakana, ASCII, etc.)
 ```

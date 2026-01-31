@@ -3,7 +3,14 @@
 //! Each visual effect implements the Effect trait. The main loop calls
 //! update() and render() on the active effect each frame.
 
+pub mod binary;
+pub mod cascade;
 pub mod classic;
+pub mod fire;
+pub mod glitch;
+pub mod ocean;
+pub mod parallax;
+pub mod pulse;
 pub mod registry;
 
 use crate::buffer::ScreenBuffer;

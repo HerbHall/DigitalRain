@@ -1,12 +1,21 @@
 //! Effect registry: discovery, listing, and creation of effects by name.
 
 use super::Effect;
+use super::binary::BinaryRain;
+use super::cascade::CascadeRain;
 use super::classic::ClassicRain;
+use super::fire::FireEffect;
+use super::glitch::GlitchRain;
+use super::ocean::OceanEffect;
+use super::parallax::ParallaxRain;
+use super::pulse::PulseRain;
 use crate::config::Config;
 
 /// Returns the list of available effect names.
 pub fn effect_names() -> &'static [&'static str] {
-    &["classic"]
+    &[
+        "classic", "binary", "cascade", "pulse", "glitch", "fire", "ocean", "parallax",
+    ]
 }
 
 /// Get the next effect name in the cycle after the given name.
@@ -27,6 +36,13 @@ pub fn create_effect(
 ) -> Option<Box<dyn Effect>> {
     match name {
         "classic" => Some(Box::new(ClassicRain::with_config(width, height, config))),
+        "binary" => Some(Box::new(BinaryRain::with_config(width, height, config))),
+        "cascade" => Some(Box::new(CascadeRain::with_config(width, height, config))),
+        "pulse" => Some(Box::new(PulseRain::with_config(width, height, config))),
+        "glitch" => Some(Box::new(GlitchRain::with_config(width, height, config))),
+        "fire" => Some(Box::new(FireEffect::with_config(width, height, config))),
+        "ocean" => Some(Box::new(OceanEffect::with_config(width, height, config))),
+        "parallax" => Some(Box::new(ParallaxRain::with_config(width, height, config))),
         _ => None,
     }
 }
@@ -35,8 +51,13 @@ pub fn create_effect(
 pub fn print_effects() {
     println!("Available effects:");
     println!("  classic    - Classic Matrix digital rain");
-    println!();
-    println!("More effects coming in Phase 5 (cascade, pulse, glitch, binary, fire, ocean)");
+    println!("  binary     - Dense binary 0/1 data stream");
+    println!("  cascade    - Wave-front column spawning (curtain effect)");
+    println!("  pulse      - Rain with brightness wave overlay");
+    println!("  glitch     - Rain with digital corruption events");
+    println!("  fire       - Classic cellular automata fire simulation");
+    println!("  ocean      - Sine-wave water surface simulation");
+    println!("  parallax   - Multi-layer rain with depth (foreground/background)");
 }
 
 /// Print available color palettes to stdout (for --list-colors).

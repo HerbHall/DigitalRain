@@ -95,45 +95,54 @@ impl RainField {
     /// Render all columns into the screen buffer.
     pub fn render(&self, buffer: &mut ScreenBuffer) {
         for col in &self.columns {
-            self.render_column(col, buffer);
+            render_rain_column(col, &self.palette, self.height, self.forward, buffer);
         }
     }
+}
 
-    /// Render a single rain column with gradient trail.
-    fn render_column(&self, col: &RainColumn, buffer: &mut ScreenBuffer) {
-        let trail_len = col.trail.len();
-        if trail_len == 0 {
-            return;
+/// Render a single rain column with gradient trail.
+///
+/// Extracted as a free function so other effects (e.g., Cascade) can reuse
+/// column rendering without needing a full RainField.
+pub fn render_rain_column(
+    col: &RainColumn,
+    palette: &Palette,
+    screen_height: u16,
+    forward: bool,
+    buffer: &mut ScreenBuffer,
+) {
+    let trail_len = col.trail.len();
+    if trail_len == 0 {
+        return;
+    }
+
+    for (i, &(y, ch)) in col.trail.iter().enumerate() {
+        if y >= screen_height {
+            continue;
         }
 
-        for (i, &(y, ch)) in col.trail.iter().enumerate() {
-            if y >= self.height {
-                continue;
-            }
+        // Position in gradient: 0.0 = brightest (head), 1.0 = dimmest (tail)
+        // Index 0 = oldest (top of screen), last index = newest (bottom/head)
+        let position = if forward {
+            // Forward: tail (first index) is brightest
+            i as f32 / trail_len.max(1) as f32
+        } else {
+            // Default: head (last index) is brightest (classic Matrix look)
+            (trail_len - 1 - i) as f32 / trail_len.max(1) as f32
+        };
 
-            // Position in gradient: 0.0 = brightest (head), 1.0 = dimmest (tail)
-            // Index 0 = oldest (top of screen), last index = newest (bottom/head)
-            let position = if self.forward {
-                // Forward: tail (first index) is brightest
-                i as f32 / trail_len.max(1) as f32
-            } else {
-                // Default: head (last index) is brightest (classic Matrix look)
-                (trail_len - 1 - i) as f32 / trail_len.max(1) as f32
-            };
+        let fg = if col.highlight_positions.contains(&i) {
+            palette.highlight
+        } else {
+            trail_color(
+                palette.head,
+                palette.body_bright,
+                palette.body_mid,
+                palette.tail,
+                position,
+            )
+        };
 
-            let fg = if col.highlight_positions.contains(&i) {
-                self.palette.highlight
-            } else {
-                trail_color(
-                    self.palette.head,
-                    self.palette.body_bright,
-                    self.palette.body_mid,
-                    self.palette.tail,
-                    position,
-                )
-            };
-
-            buffer.set_cell(col.x, y, ch, fg, self.palette.background);
-        }
+        buffer.set_cell(col.x, y, ch, fg, palette.background);
     }
 }

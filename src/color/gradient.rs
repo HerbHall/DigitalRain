@@ -56,6 +56,21 @@ pub fn color_to_rgb(color: Color) -> (u8, u8, u8) {
     }
 }
 
+/// Scale an RGB color's brightness by a factor.
+///
+/// Non-RGB colors (like Color::Reset) pass through unchanged.
+/// Values are clamped to 0-255 to prevent overflow.
+pub fn scale_color(color: Color, factor: f64) -> Color {
+    match color {
+        Color::Rgb { r, g, b } => Color::Rgb {
+            r: (r as f64 * factor).round().clamp(0.0, 255.0) as u8,
+            g: (g as f64 * factor).round().clamp(0.0, 255.0) as u8,
+            b: (b as f64 * factor).round().clamp(0.0, 255.0) as u8,
+        },
+        other => other,
+    }
+}
+
 /// Linearly interpolate between two u8 values.
 fn lerp_u8(a: u8, b: u8, t: f32) -> u8 {
     let result = (a as f32) * (1.0 - t) + (b as f32) * t;

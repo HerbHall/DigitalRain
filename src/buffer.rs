@@ -96,6 +96,17 @@ impl ScreenBuffer {
         }
     }
 
+    /// Get a mutable reference to a cell at the given coordinates.
+    /// Returns None if out of bounds. Used for in-place blending (transitions, effects).
+    pub fn get_cell_mut(&mut self, x: u16, y: u16) -> Option<&mut Cell> {
+        if x < self.width && y < self.height {
+            let idx = (y as usize) * (self.width as usize) + (x as usize);
+            Some(&mut self.cells[idx])
+        } else {
+            None
+        }
+    }
+
     pub fn width(&self) -> u16 {
         self.width
     }
