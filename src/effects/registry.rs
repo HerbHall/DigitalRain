@@ -41,19 +41,51 @@ pub fn print_effects() {
 
 /// Print available color palettes to stdout (for --list-colors).
 pub fn print_palettes() {
-    println!("Available color palettes:");
-    for name in crate::color::palette::palette_names() {
+    use crate::color::palette;
+
+    // Featured (hand-tuned) palettes with descriptions
+    println!("Featured palettes:");
+    for name in palette::hand_tuned_names() {
         let desc = match *name {
             "classic" => "Green phosphor (the Matrix default)",
             "gold" => "Warm amber/gold CRT feel",
             "cyan" => "Cold ice-blue digital",
             "red" => "Crimson danger/alert",
-            "monochrome" => "White/grey on black",
+            "silver" => "White/grey on black",
             "purple" => "Violet synthwave",
+            "fire" => "Red/orange/yellow heat gradient",
+            "ocean" => "Deep blue/teal aquatic",
+            "synthwave" => "Pink/purple/cyan retro neon",
             _ => "",
         };
         println!("  {:<12} - {}", name, desc);
     }
+
+    // CSS named colors in compact columns
+    let css_names: Vec<&str> = palette::palette_names()
+        .into_iter()
+        .filter(|n| !palette::hand_tuned_names().contains(n))
+        .collect();
+
+    println!();
+    println!(
+        "CSS named colors ({} additional -- use any as --color <name>):",
+        css_names.len()
+    );
+
+    // Print in columns (4 per row, 20 chars wide)
+    const COLS: usize = 4;
+    const COL_WIDTH: usize = 22;
+    for chunk in css_names.chunks(COLS) {
+        print!("  ");
+        for name in chunk {
+            print!("{:<width$}", name, width = COL_WIDTH);
+        }
+        println!();
+    }
+
+    println!();
+    println!("Aliases: monochrome -> silver");
 }
 
 /// Print available character sets to stdout (for --list-charsets).

@@ -10,7 +10,7 @@ Features true-color gradient trails, film-authentic katakana characters, gold hi
 - **Film-authentic characters**: Half-width katakana mixed with digits and symbols
 - **Gold highlights**: Occasional gold characters like in the original Matrix films
 - **Character mutation**: Characters flicker and change over time
-- **Multiple color palettes**: Classic green, gold, cyan, red, monochrome, purple
+- **150+ color palettes**: 9 hand-tuned featured palettes + all 148 CSS Level 4 named colors
 - **Multiple character sets**: Matrix, ASCII, binary, digits, katakana, latin
 - **Configurable**: Speed, density, FPS, palette, and charset via CLI flags
 - **Interactive controls**: Adjust speed, density, and effects in real-time with keyboard
@@ -64,14 +64,25 @@ Press `q`, `Esc`, or `Ctrl+C` to quit. Press `?` while running to show the keybi
 
 ### Color Palettes
 
+#### Featured (hand-tuned)
+
 | Name | Description |
 |---|---|
 | `classic` | Green phosphor (the Matrix default) |
 | `gold` | Warm amber/gold CRT feel |
 | `cyan` | Cold ice-blue digital |
 | `red` | Crimson danger/alert |
-| `monochrome` | White/grey on black |
+| `silver` | White/grey on black |
 | `purple` | Violet synthwave |
+| `fire` | Red/orange/yellow heat gradient |
+| `ocean` | Deep blue/teal aquatic |
+| `synthwave` | Pink/purple/cyan retro neon |
+
+#### CSS Named Colors
+
+All 148 CSS Level 4 named colors are also available as palettes. Gradients are auto-generated from the base color using HSL math. Examples: `coral`, `tomato`, `dodgerblue`, `hotpink`, `indigo`, `springgreen`, `crimson`, `orchid`.
+
+Use `--list-colors` to see the full list. Aliases: `monochrome` -> `silver`.
 
 ### Character Sets
 
@@ -101,6 +112,16 @@ digital_rain --color gold --speed 0.5 --density 2.0
 
 # Purple synthwave at 60fps
 digital_rain --color purple --fps 60
+
+# CSS named colors work directly
+digital_rain --color coral
+digital_rain --color dodgerblue --speed 1.5
+digital_rain --color hotpink --charset binary
+
+# Multi-hue featured palettes
+digital_rain --color fire
+digital_rain --color ocean --density 2.0
+digital_rain --color synthwave --fps 60
 
 # Fully randomized effect and parameters
 digital_rain --random
@@ -138,6 +159,14 @@ Speed and density are clamped to the range 0.1x - 10.0x. Status messages appear 
 
 ## Version History
 
+### v0.4.0 - CSS Color Palettes
+- All 148 CSS Level 4 named colors available as palettes (e.g. `--color coral`)
+- Auto-generated gradients from base color via HSL math
+- 3 new hand-tuned multi-hue palettes: fire, ocean, synthwave
+- Renamed "monochrome" to "silver" (CSS standard); monochrome kept as alias
+- Grouped `--list-colors` output: featured palettes + CSS colors in columns
+- Total palette count: 150+
+
 ### v0.3.1 - Auto-Cycle Timer
 - `--timer <seconds>` flag to auto-randomize effect at a configurable interval
 - `t` key to toggle auto-cycle on/off at runtime
@@ -156,7 +185,7 @@ Speed and density are clamped to the range 0.1x - 10.0x. Status messages appear 
 
 ### v0.2.0 - CLI & Configuration
 - clap-based CLI argument parsing
-- 6 color palettes: classic, gold, cyan, red, monochrome, purple
+- 6 color palettes: classic, gold, cyan, red, silver (was monochrome), purple
 - 6 character sets: matrix, ascii, binary, digits, katakana, latin
 - Configurable speed, density, and FPS
 - Effect registry with `--list-effects`, `--list-colors`, `--list-charsets`
