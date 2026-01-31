@@ -50,9 +50,14 @@ fn main() {
     }
 
     // Build config from CLI args (or randomize if --random)
+    // When randomizing, carry over CLI flags that shouldn't be randomized
+    // (timer, forward direction, CRT settings).
     let mut config = if cli.random {
         let mut c = Config::randomized();
         c.forward = cli.forward;
+        c.auto_cycle_secs = cli.timer.map(|t| t.max(1.0));
+        c.crt_enabled = cli.crt;
+        c.crt_intensity = cli.crt_intensity.clamp(0.0, 1.0);
         c
     } else {
         Config::from_cli(&cli)
