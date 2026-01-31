@@ -212,3 +212,38 @@ impl Palette {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn palette_names_not_empty() {
+        assert!(!palette_names().is_empty());
+    }
+
+    #[test]
+    fn all_named_palettes_resolve() {
+        for name in palette_names() {
+            let p = palette_by_name(name);
+            // Verify head is an RGB color (not Reset/default)
+            assert!(
+                matches!(p.head, Color::Rgb { .. }),
+                "palette '{}' head should be RGB",
+                name
+            );
+        }
+    }
+
+    #[test]
+    fn unknown_palette_falls_back_to_classic() {
+        let unknown = palette_by_name("nonexistent");
+        let classic = Palette::classic();
+        // Both should produce the same head color
+        assert!(matches!(
+            (unknown.head, classic.head),
+            (Color::Rgb { r: r1, g: g1, b: b1 }, Color::Rgb { r: r2, g: g2, b: b2 })
+            if r1 == r2 && g1 == g2 && b1 == b2
+        ));
+    }
+}

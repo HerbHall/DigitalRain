@@ -61,3 +61,97 @@ fn lerp_u8(a: u8, b: u8, t: f32) -> u8 {
     let result = (a as f32) * (1.0 - t) + (b as f32) * t;
     result.round() as u8
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn rgb(r: u8, g: u8, b: u8) -> Color {
+        Color::Rgb { r, g, b }
+    }
+
+    fn unwrap_rgb(c: Color) -> (u8, u8, u8) {
+        match c {
+            Color::Rgb { r, g, b } => (r, g, b),
+            _ => panic!("expected Rgb color"),
+        }
+    }
+
+    #[test]
+    fn lerp_color_at_zero_returns_from() {
+        let result = lerp_color(rgb(255, 0, 0), rgb(0, 255, 0), 0.0);
+        assert_eq!(unwrap_rgb(result), (255, 0, 0));
+    }
+
+    #[test]
+    fn lerp_color_at_one_returns_to() {
+        let result = lerp_color(rgb(255, 0, 0), rgb(0, 255, 0), 1.0);
+        assert_eq!(unwrap_rgb(result), (0, 255, 0));
+    }
+
+    #[test]
+    fn lerp_color_at_half_returns_midpoint() {
+        let result = lerp_color(rgb(0, 0, 0), rgb(200, 100, 50), 0.5);
+        assert_eq!(unwrap_rgb(result), (100, 50, 25));
+    }
+
+    #[test]
+    fn lerp_color_clamps_below_zero() {
+        let result = lerp_color(rgb(100, 100, 100), rgb(200, 200, 200), -5.0);
+        assert_eq!(unwrap_rgb(result), (100, 100, 100));
+    }
+
+    #[test]
+    fn lerp_color_clamps_above_one() {
+        let result = lerp_color(rgb(100, 100, 100), rgb(200, 200, 200), 10.0);
+        assert_eq!(unwrap_rgb(result), (200, 200, 200));
+    }
+
+    #[test]
+    fn lerp_color_non_rgb_defaults_to_black() {
+        let result = lerp_color(Color::Reset, rgb(100, 100, 100), 0.5);
+        assert_eq!(unwrap_rgb(result), (50, 50, 50));
+    }
+
+    #[test]
+    fn trail_color_at_head_is_close_to_head_color() {
+        let head = rgb(220, 255, 220);
+        let bright = rgb(0, 230, 50);
+        let mid = rgb(0, 150, 30);
+        let tail = rgb(0, 60, 15);
+        let result = trail_color(head, bright, mid, tail, 0.0);
+        assert_eq!(unwrap_rgb(result), (220, 255, 220));
+    }
+
+    #[test]
+    fn trail_color_at_tail_is_close_to_tail_color() {
+        let head = rgb(220, 255, 220);
+        let bright = rgb(0, 230, 50);
+        let mid = rgb(0, 150, 30);
+        let tail = rgb(0, 60, 15);
+        let result = trail_color(head, bright, mid, tail, 1.0);
+        assert_eq!(unwrap_rgb(result), (0, 60, 15));
+    }
+
+    #[test]
+    fn trail_color_monotonically_decreases_green() {
+        let head = rgb(220, 255, 220);
+        let bright = rgb(0, 230, 50);
+        let mid = rgb(0, 150, 30);
+        let tail = rgb(0, 60, 15);
+
+        let mut prev_g = 255u8;
+        for i in 0..=10 {
+            let pos = i as f32 / 10.0;
+            let (_, g, _) = unwrap_rgb(trail_color(head, bright, mid, tail, pos));
+            assert!(
+                g <= prev_g,
+                "green should decrease along trail: {} > {} at pos {}",
+                g,
+                prev_g,
+                pos
+            );
+            prev_g = g;
+        }
+    }
+}

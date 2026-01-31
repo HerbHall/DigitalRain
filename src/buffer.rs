@@ -186,3 +186,93 @@ fn color_eq(a: Color, b: Color) -> bool {
         _ => false,
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn new_buffer_has_correct_dimensions() {
+        let buf = ScreenBuffer::new(80, 24);
+        assert_eq!(buf.width(), 80);
+        assert_eq!(buf.height(), 24);
+    }
+
+    #[test]
+    fn set_and_get_cell() {
+        let mut buf = ScreenBuffer::new(10, 10);
+        let fg = Color::Rgb { r: 0, g: 255, b: 0 };
+        buf.set_cell(5, 3, 'A', fg, Color::Reset);
+        let cell = buf.get_cell(5, 3).unwrap();
+        assert_eq!(cell.ch, 'A');
+        assert!(matches!(cell.fg, Color::Rgb { r: 0, g: 255, b: 0 }));
+    }
+
+    #[test]
+    fn set_cell_out_of_bounds_is_ignored() {
+        let mut buf = ScreenBuffer::new(10, 10);
+        // Should not panic
+        buf.set_cell(100, 100, 'X', Color::Reset, Color::Reset);
+        assert!(buf.get_cell(100, 100).is_none());
+    }
+
+    #[test]
+    fn clear_resets_all_cells() {
+        let mut buf = ScreenBuffer::new(5, 5);
+        buf.set_cell(2, 2, 'Z', Color::Rgb { r: 255, g: 0, b: 0 }, Color::Reset);
+        buf.clear();
+        let cell = buf.get_cell(2, 2).unwrap();
+        assert_eq!(cell.ch, ' ');
+        assert!(matches!(cell.fg, Color::Reset));
+    }
+
+    #[test]
+    fn resize_clears_and_updates_dimensions() {
+        let mut buf = ScreenBuffer::new(10, 10);
+        buf.set_cell(5, 5, 'A', Color::Reset, Color::Reset);
+        buf.resize(20, 15);
+        assert_eq!(buf.width(), 20);
+        assert_eq!(buf.height(), 15);
+        // Old coordinates should now be a default cell
+        let cell = buf.get_cell(5, 5).unwrap();
+        assert_eq!(cell.ch, ' ');
+    }
+
+    #[test]
+    fn color_eq_works_for_rgb() {
+        assert!(color_eq(
+            Color::Rgb {
+                r: 10,
+                g: 20,
+                b: 30
+            },
+            Color::Rgb {
+                r: 10,
+                g: 20,
+                b: 30
+            },
+        ));
+        assert!(!color_eq(
+            Color::Rgb {
+                r: 10,
+                g: 20,
+                b: 30
+            },
+            Color::Rgb {
+                r: 10,
+                g: 20,
+                b: 31
+            },
+        ));
+    }
+
+    #[test]
+    fn color_eq_reset_matches_reset() {
+        assert!(color_eq(Color::Reset, Color::Reset));
+    }
+
+    #[test]
+    fn color_eq_different_variants_are_not_equal() {
+        assert!(!color_eq(Color::Reset, Color::Rgb { r: 0, g: 0, b: 0 }));
+    }
+}

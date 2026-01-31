@@ -98,3 +98,57 @@ impl CharacterPool {
         self.chars[idx]
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn charset_names_not_empty() {
+        assert!(!charset_names().is_empty());
+    }
+
+    #[test]
+    fn all_named_charsets_resolve() {
+        for name in charset_names() {
+            let pool = charset_by_name(name);
+            assert!(
+                !pool.chars.is_empty(),
+                "charset '{}' should not be empty",
+                name
+            );
+        }
+    }
+
+    #[test]
+    fn unknown_charset_falls_back_to_matrix() {
+        let unknown = charset_by_name("nonexistent");
+        let matrix = CharacterPool::matrix();
+        assert_eq!(unknown.chars.len(), matrix.chars.len());
+    }
+
+    #[test]
+    fn binary_charset_has_only_zero_and_one() {
+        let pool = CharacterPool::binary();
+        assert_eq!(pool.chars.len(), 2);
+        assert!(pool.chars.contains(&'0'));
+        assert!(pool.chars.contains(&'1'));
+    }
+
+    #[test]
+    fn matrix_charset_contains_katakana() {
+        let pool = CharacterPool::matrix();
+        // Half-width katakana U+FF66 (ｦ)
+        assert!(pool.chars.contains(&'\u{FF66}'));
+    }
+
+    #[test]
+    fn random_char_returns_valid_char() {
+        let pool = CharacterPool::matrix();
+        let mut rng = rand::rng();
+        for _ in 0..100 {
+            let ch = pool.random_char(&mut rng);
+            assert!(pool.chars.contains(&ch));
+        }
+    }
+}
