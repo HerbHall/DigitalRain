@@ -9,6 +9,14 @@ pub fn effect_names() -> &'static [&'static str] {
     &["classic"]
 }
 
+/// Get the next effect name in the cycle after the given name.
+pub fn next_effect_name(current: &str) -> &'static str {
+    let names = effect_names();
+    let current_idx = names.iter().position(|&n| n == current).unwrap_or(0);
+    let next_idx = (current_idx + 1) % names.len();
+    names[next_idx]
+}
+
 /// Create an effect by name, using the provided config and screen dimensions.
 /// Returns None if the effect name is unknown.
 pub fn create_effect(

@@ -40,4 +40,20 @@ impl Effect for ClassicRain {
     fn resize(&mut self, width: u16, height: u16) {
         self.rain.resize(width, height);
     }
+
+    fn set_speed(&mut self, multiplier: f64) {
+        self.rain.set_speed(multiplier);
+    }
+
+    fn speed(&self) -> f64 {
+        self.rain.speed()
+    }
+
+    fn set_density(&mut self, multiplier: f64) {
+        self.rain.set_density(multiplier);
+    }
+
+    fn density(&self) -> f64 {
+        self.rain.density()
+    }
 }

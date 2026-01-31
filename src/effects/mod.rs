@@ -25,4 +25,20 @@ pub trait Effect {
 
     /// Handle a terminal resize.
     fn resize(&mut self, width: u16, height: u16);
+
+    /// Set the speed multiplier. Default no-op for effects that don't support it.
+    fn set_speed(&mut self, _multiplier: f64) {}
+
+    /// Get the current speed multiplier. Default returns 1.0.
+    fn speed(&self) -> f64 {
+        1.0
+    }
+
+    /// Set the density multiplier. Default no-op for effects that don't support it.
+    fn set_density(&mut self, _multiplier: f64) {}
+
+    /// Get the current density multiplier. Default returns 1.0.
+    fn density(&self) -> f64 {
+        1.0
+    }
 }

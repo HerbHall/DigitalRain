@@ -52,6 +52,26 @@ impl RainField {
         }
     }
 
+    /// Set the speed multiplier (affects how fast columns fall).
+    pub fn set_speed(&mut self, multiplier: f64) {
+        self.speed_multiplier = multiplier;
+    }
+
+    /// Get the current speed multiplier.
+    pub fn speed(&self) -> f64 {
+        self.speed_multiplier
+    }
+
+    /// Set the density (spawn rate). Higher = more columns at once.
+    pub fn set_density(&mut self, multiplier: f64) {
+        self.spawn_rate = 0.15 * multiplier;
+    }
+
+    /// Get the current density multiplier.
+    pub fn density(&self) -> f64 {
+        self.spawn_rate / 0.15
+    }
+
     /// Resize the field (e.g., when terminal is resized).
     pub fn resize(&mut self, width: u16, height: u16) {
         self.width = width;

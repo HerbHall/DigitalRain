@@ -8,18 +8,27 @@ mod buffer;
 mod color;
 mod config;
 mod effects;
+mod overlay;
 mod rain;
 mod terminal;
 mod timing;
 
 use clap::Parser;
-use crossterm::event::Event;
+use crossterm::event::{Event, KeyCode, KeyEvent};
 
 use buffer::ScreenBuffer;
 use config::{Cli, Config};
 use effects::registry;
 use terminal::Terminal;
 use timing::FrameClock;
+
+/// How many frames to show the status message after a parameter change.
+const STATUS_DISPLAY_FRAMES: u32 = 60;
+
+/// Speed adjustment step per keypress.
+const SPEED_STEP: f64 = 0.2;
+/// Density adjustment step per keypress.
+const DENSITY_STEP: f64 = 0.2;
 
 fn main() {
     let cli = Cli::parse();
@@ -39,13 +48,12 @@ fn main() {
     }
 
     // Build config from CLI args (or randomize if --random)
-    let config = if cli.random {
+    let mut config = if cli.random {
         Config::randomized()
     } else {
         Config::from_cli(&cli)
     };
 
-    // If randomized, show what was picked so the user knows
     if cli.random {
         eprintln!(
             "Random: effect={}, color={}, charset={}, speed={:.1}, density={:.1}",
@@ -70,8 +78,15 @@ fn main() {
                 "Unknown effect '{}', using classic. Run --list-effects to see options.",
                 config.effect_name
             );
+            config.effect_name = "classic".to_string();
             registry::create_effect("classic", term.width, term.height, &config).unwrap()
         });
+
+    // Runtime state
+    let mut paused = false;
+    let mut show_help = false;
+    let mut status_message: Option<String> = None;
+    let mut status_frames_remaining: u32 = 0;
 
     // Main loop: poll events, update, render
     loop {
@@ -86,6 +101,111 @@ fn main() {
                     buffer.resize(term.width, term.height);
                     effect.resize(term.width, term.height);
                 }
+
+                // Handle interactive key controls
+                if let Event::Key(KeyEvent { code, .. }) = event {
+                    match code {
+                        // Pause / Resume
+                        KeyCode::Char(' ') => {
+                            paused = !paused;
+                            set_status(
+                                &mut status_message,
+                                &mut status_frames_remaining,
+                                if paused { "PAUSED" } else { "RESUMED" },
+                            );
+                        }
+
+                        // Speed up
+                        KeyCode::Char('+') | KeyCode::Char('=') => {
+                            let new_speed = (effect.speed() + SPEED_STEP).clamp(0.1, 10.0);
+                            effect.set_speed(new_speed);
+                            set_status(
+                                &mut status_message,
+                                &mut status_frames_remaining,
+                                &format!("Speed: {:.1}x", new_speed),
+                            );
+                        }
+
+                        // Speed down
+                        KeyCode::Char('-') => {
+                            let new_speed = (effect.speed() - SPEED_STEP).clamp(0.1, 10.0);
+                            effect.set_speed(new_speed);
+                            set_status(
+                                &mut status_message,
+                                &mut status_frames_remaining,
+                                &format!("Speed: {:.1}x", new_speed),
+                            );
+                        }
+
+                        // Density up
+                        KeyCode::Char(']') => {
+                            let new_density = (effect.density() + DENSITY_STEP).clamp(0.1, 10.0);
+                            effect.set_density(new_density);
+                            set_status(
+                                &mut status_message,
+                                &mut status_frames_remaining,
+                                &format!("Density: {:.1}x", new_density),
+                            );
+                        }
+
+                        // Density down
+                        KeyCode::Char('[') => {
+                            let new_density = (effect.density() - DENSITY_STEP).clamp(0.1, 10.0);
+                            effect.set_density(new_density);
+                            set_status(
+                                &mut status_message,
+                                &mut status_frames_remaining,
+                                &format!("Density: {:.1}x", new_density),
+                            );
+                        }
+
+                        // Next effect
+                        KeyCode::Char('n') => {
+                            let next_name = registry::next_effect_name(&config.effect_name);
+                            config.effect_name = next_name.to_string();
+                            if let Some(new_effect) =
+                                registry::create_effect(next_name, term.width, term.height, &config)
+                            {
+                                effect = new_effect;
+                            }
+                            set_status(
+                                &mut status_message,
+                                &mut status_frames_remaining,
+                                &format!("Effect: {}", config.effect_name),
+                            );
+                        }
+
+                        // Randomize
+                        KeyCode::Char('r') => {
+                            config = Config::randomized();
+                            if let Some(new_effect) = registry::create_effect(
+                                &config.effect_name,
+                                term.width,
+                                term.height,
+                                &config,
+                            ) {
+                                effect = new_effect;
+                            }
+                            set_status(
+                                &mut status_message,
+                                &mut status_frames_remaining,
+                                &format!(
+                                    "Random: {} / {} / {:.1}x",
+                                    config.effect_name,
+                                    config.palette_name,
+                                    config.speed_multiplier,
+                                ),
+                            );
+                        }
+
+                        // Toggle help overlay
+                        KeyCode::Char('?') => {
+                            show_help = !show_help;
+                        }
+
+                        _ => {}
+                    }
+                }
             }
             Ok(None) => {}
             Err(_) => break,
@@ -95,12 +215,36 @@ fn main() {
             continue;
         }
 
-        effect.update(clock.delta_time());
+        // Update the effect (skip when paused)
+        if !paused {
+            effect.update(clock.delta_time());
+        }
 
+        // Render
         buffer.clear();
         effect.render(&mut buffer);
+
+        // Draw overlays on top of the effect
+        if show_help {
+            overlay::render_help(&mut buffer);
+        }
+
+        // Show status message if active
+        if status_frames_remaining > 0 {
+            if let Some(ref msg) = status_message {
+                overlay::render_status(&mut buffer, msg);
+            }
+            status_frames_remaining -= 1;
+        }
+
         if buffer.flush().is_err() {
             break;
         }
     }
+}
+
+/// Set the status message and reset the display timer.
+fn set_status(message: &mut Option<String>, frames: &mut u32, text: &str) {
+    *message = Some(text.to_string());
+    *frames = STATUS_DISPLAY_FRAMES;
 }

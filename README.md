@@ -13,6 +13,7 @@ Features true-color gradient trails, film-authentic katakana characters, gold hi
 - **Multiple color palettes**: Classic green, gold, cyan, red, monochrome, purple
 - **Multiple character sets**: Matrix, ASCII, binary, digits, katakana, latin
 - **Configurable**: Speed, density, FPS, palette, and charset via CLI flags
+- **Interactive controls**: Adjust speed, density, and effects in real-time with keyboard
 - **Cross-platform**: Windows Terminal, PowerShell, cmd.exe, Linux, macOS
 
 ## Installation
@@ -41,7 +42,7 @@ cargo run --release
 digital_rain [OPTIONS]
 ```
 
-Press `q`, `Esc`, or `Ctrl+C` to quit.
+Press `q`, `Esc`, or `Ctrl+C` to quit. Press `?` while running to show the keybindings help overlay.
 
 ### Options
 
@@ -104,9 +105,26 @@ digital_rain --color purple --fps 60
 digital_rain --random
 ```
 
+### Interactive Controls
+
+While running, use these keys to adjust the rain in real-time:
+
+| Key | Action |
+|---|---|
+| `Space` | Pause / Resume |
+| `+` / `=` | Speed up (0.2x per press) |
+| `-` | Speed down (0.2x per press) |
+| `]` | Density up (0.2x per press) |
+| `[` | Density down (0.2x per press) |
+| `n` | Next effect |
+| `r` | Randomize (effect, palette, speed) |
+| `?` | Toggle keybindings help overlay |
+| `q` / `Esc` | Quit |
+
+Speed and density are clamped to the range 0.1x - 10.0x. Status messages appear briefly at the bottom of the screen when parameters change.
+
 ## Planned Features
 
-- Interactive runtime controls (speed/density/effect adjustment via keyboard)
 - CRT simulation (scanlines, phosphor glow, flicker)
 - Depth/parallax layers (foreground + background rain at different speeds)
 - Additional effects: cascade, pulse, glitch, binary, fire, ocean
@@ -114,6 +132,16 @@ digital_rain --random
 - Effect transitions (smooth crossfade between effects)
 
 ## Version History
+
+### v0.3.0 - Interactive Controls & Polish
+- Pause/resume with Space key
+- Runtime speed adjustment with +/- keys (0.2x steps, clamped 0.1-10.0)
+- Runtime density adjustment with [/] keys (0.2x steps, clamped 0.1-10.0)
+- Cycle through effects with `n` key
+- Randomize effect, palette, and speed with `r` key
+- Keybindings help overlay toggled with `?` key
+- Status message overlay for parameter change feedback
+- Terminal resize handling for all controls
 
 ### v0.2.0 - CLI & Configuration
 - clap-based CLI argument parsing
