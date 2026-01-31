@@ -7,7 +7,7 @@ use std::io;
 
 use crossterm::{
     cursor,
-    event::{self, Event, KeyCode, KeyEvent, KeyModifiers},
+    event::{self, Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers},
     execute,
     terminal::{self, ClearType},
 };
@@ -61,17 +61,21 @@ impl Terminal {
     }
 
     /// Check if the user pressed 'q', Escape, or Ctrl+C.
+    /// Only responds to Press events to avoid double-firing on Windows.
     pub fn should_quit(event: &Event) -> bool {
         matches!(
             event,
             Event::Key(KeyEvent {
                 code: KeyCode::Char('q'),
+                kind: KeyEventKind::Press,
                 ..
             }) | Event::Key(KeyEvent {
                 code: KeyCode::Esc,
+                kind: KeyEventKind::Press,
                 ..
             }) | Event::Key(KeyEvent {
                 code: KeyCode::Char('c'),
+                kind: KeyEventKind::Press,
                 modifiers: KeyModifiers::CONTROL,
                 ..
             })

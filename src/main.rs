@@ -14,7 +14,7 @@ mod terminal;
 mod timing;
 
 use clap::Parser;
-use crossterm::event::{Event, KeyCode, KeyEvent};
+use crossterm::event::{Event, KeyCode, KeyEvent, KeyEventKind};
 
 use buffer::ScreenBuffer;
 use config::{Cli, Config};
@@ -110,8 +110,9 @@ fn main() {
                     effect.resize(term.width, term.height);
                 }
 
-                // Handle interactive key controls
-                if let Event::Key(KeyEvent { code, .. }) = event {
+                // Handle interactive key controls (Press only — ignore Release/Repeat
+                // which Windows/crossterm sends and would double-toggle states)
+                if let Event::Key(KeyEvent { code, kind: KeyEventKind::Press, .. }) = event {
                     match code {
                         // Pause / Resume
                         KeyCode::Char(' ') => {
