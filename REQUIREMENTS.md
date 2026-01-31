@@ -59,35 +59,40 @@ Windows-first, cross-platform, with a flexible effect system and rich customizat
 - `r` - Randomize parameters
 - `?` - Show keybindings overlay
 
-## Future / Stretch Goals
-
-### SG-1: CRT Simulation
+### CR-8: CRT Simulation
 - Scanline effect using dim/bright alternating rows
 - Phosphor glow approximation using background colors on adjacent cells
 - Screen flicker/noise
+- Toggleable via CLI flag (`--crt`) and runtime key
 
-### SG-2: Depth/Parallax Layers
+### CR-9: Depth/Parallax Layers
 - Multiple rain layers at different speeds and brightness levels
 - Foreground: fast, bright, large characters
 - Background: slow, dim, creates depth illusion
+- Configurable number of layers and speed/brightness ratios
 
-### SG-3: Embedded Messages
+### CR-10: Additional Effects
+- **Classic**: Standard Matrix rain (CR-1)
+- **Cascade**: Top-down wave revealing characters
+- **Pulse**: Brightness waves radiating outward
+- **Glitch**: Random block distortion and displacement
+- **Binary**: 0s and 1s only, hacker aesthetic
+- **Fire**: Warm color palette (red/orange/yellow) flowing upward
+- **Ocean**: Blue palette, horizontal wave motion
+- Each effect must implement the Effect trait (CR-5)
+- Effects selectable via `--effect` flag and `n` key at runtime
+
+## Future / Stretch Goals
+
+### SG-1: Embedded Messages
 - "WAKE UP NEO" style text appearing within the rain
 - Configurable message text
 - Message dissolves back into rain after display
 
-### SG-4: Additional Effects
-- Cascade: top-down wave revealing characters
-- Pulse: brightness waves radiating outward
-- Glitch: random block distortion and displacement
-- Binary: 0s and 1s only, hacker aesthetic
-- Fire: warm color palette flowing upward
-- Ocean: blue palette, horizontal wave motion
-
-### SG-5: Audio-Reactive Mode
+### SG-2: Audio-Reactive Mode
 - Modulate rain intensity/speed based on system audio
 
-### SG-6: Performance Dashboard
+### SG-3: Performance Dashboard
 - FPS counter overlay
 - CPU usage display
 - Adaptive frame rate based on terminal size
@@ -112,35 +117,48 @@ Windows-first, cross-platform, with a flexible effect system and rich customizat
 
 ## Phased Development
 
-### Phase 1: Foundation
+### Phase 1: Foundation [COMPLETE]
 - Project structure, build system
 - Terminal setup/teardown (alternate screen, raw mode, cleanup)
-- Cell buffer and rendering pipeline
-- Frame timing loop
-- Basic single-column rain (proof of concept)
+- Cell buffer with dirty-cell tracking
+- Frame timing loop (30fps target)
+- Classic rain effect: multi-column, katakana + digits, true-color gradients,
+  character mutation, gold highlights, variable speed/length
+- Effect trait scaffolding
 
-### Phase 2: Classic Rain Effect
-- Full multi-column rain with variable speeds/lengths
-- Character sets (katakana, ASCII, digits)
-- True-color gradient trails
-- Character mutation (flickering)
-- Gold highlight characters
+### Phase 2: CLI & Core Configuration
+- clap-based argument parsing (--effect, --speed, --density, --color, --fps, etc.)
+- Effect registry with --list-effects
+- --random flag for random effect + parameters
+- Speed, density, and color palette as runtime-configurable parameters
+- Wire CLI values through to the rain simulation
 
-### Phase 3: CLI & Configuration
-- clap-based argument parsing
-- TOML config file support
-- Built-in presets
-- Effect selection via CLI
+### Phase 3: Interactive Controls & Polish
+- Runtime keyboard controls (pause, speed, density, effect cycling)
+- Keybindings overlay (`?` key)
+- Terminal resize handling improvements
+- Graceful degradation on limited terminals (256-color fallback)
+- Performance tuning and frame timing refinement
 
-### Phase 4: Interactive Controls & Polish
-- Runtime keyboard controls
-- Keybindings overlay
-- Terminal resize handling
-- Graceful degradation on limited terminals
-- Performance optimization
+### Phase 4: CRT Simulation & Depth Layers
+- CRT scanline post-processing pass
+- Phosphor glow approximation (background color bleed on adjacent cells)
+- Screen flicker/noise overlay
+- Multi-layer parallax rain (foreground + background at different speeds/brightness)
+- `--crt` flag and runtime toggle
 
 ### Phase 5: Additional Effects
-- Effect trait finalization
-- Additional effect implementations
-- Random effect mode
-- Effect transitions
+- Cascade effect
+- Pulse effect
+- Glitch effect
+- Binary effect
+- Fire effect
+- Ocean effect
+- Effect transitions (smooth crossfade between effects)
+
+### Phase 6: Configuration & Presets
+- TOML config file loading (~/.config/digitalrain/config.toml)
+- Named presets ("classic", "gold", "monochrome", "cyberpunk")
+- CLI overrides config file values
+- `--preset <name>` flag
+- `--save-preset <name>` to persist current settings
