@@ -1,0 +1,16 @@
+[package]
+name = "digital_rain"
+version = "0.1.0"
+edition = "2024"
+description = "Terminal-based Matrix digital rain effect with customizable visuals"
+license = "MIT"
+
+[dependencies]
+crossterm = "0.28"
+rand = "0.9"
+clap = { version = "4", features = ["derive"] }
+
+[profile.release]
+opt-level = 3
+lto = true
+strip = true
