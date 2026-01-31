@@ -50,7 +50,7 @@ fn main() {
     // Build config from CLI args (or randomize if --random)
     let mut config = if cli.random {
         let mut c = Config::randomized();
-        c.reverse = cli.reverse;
+        c.forward = cli.forward;
         c
     } else {
         Config::from_cli(&cli)
@@ -185,9 +185,9 @@ fn main() {
 
                         // Randomize
                         KeyCode::Char('r') => {
-                            let reverse = config.reverse;
+                            let forward = config.forward;
                             config = Config::randomized();
-                            config.reverse = reverse;
+                            config.forward = forward;
                             if let Some(new_effect) = registry::create_effect(
                                 &config.effect_name,
                                 term.width,
@@ -261,9 +261,9 @@ fn main() {
                 auto_cycle_elapsed += clock.delta_time();
                 if auto_cycle_elapsed >= interval {
                     auto_cycle_elapsed = 0.0;
-                    let reverse = config.reverse;
+                    let forward = config.forward;
                     config = Config::randomized();
-                    config.reverse = reverse;
+                    config.forward = forward;
                     if let Some(new_effect) = registry::create_effect(
                         &config.effect_name,
                         term.width,
