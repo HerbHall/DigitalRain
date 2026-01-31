@@ -159,7 +159,9 @@ Speed and density are clamped to the range 0.1x - 10.0x. Status messages appear 
 - `--crt` flag to enable CRT simulation at startup
 - `--crt-intensity` to control effect strength (0.0-1.0, default 0.7)
 - `c` key to toggle CRT on/off at runtime
+- CRT included in randomization (~7% chance) for `r` key and auto-cycle timer
 - CRT applies before overlays so help/status text stays crisp
+- Fix: `--timer` and `--crt` flags no longer discarded when combined with `--random`
 
 ### v0.3.1 - Auto-Cycle Timer
 - `--timer <seconds>` flag to auto-randomize effect at a configurable interval
