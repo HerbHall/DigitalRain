@@ -210,6 +210,7 @@ fn main() {
                             let forward = config.forward;
                             config = Config::randomized();
                             config.forward = forward;
+                            crt_filter.set_enabled(config.crt_enabled);
                             if let Some(new_effect) = registry::create_effect(
                                 &config.effect_name,
                                 term.width,
@@ -287,6 +288,7 @@ fn main() {
                     let forward = config.forward;
                     config = Config::randomized();
                     config.forward = forward;
+                    crt_filter.set_enabled(config.crt_enabled);
                     if let Some(new_effect) = registry::create_effect(
                         &config.effect_name,
                         term.width,

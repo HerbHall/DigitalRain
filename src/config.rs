@@ -117,7 +117,7 @@ impl Config {
             target_fps: 30,
             auto_cycle_secs: None,
             forward: false,
-            crt_enabled: false,
+            crt_enabled: rng.random_range(0.0..1.0) < 0.07, // ~7% chance
             crt_intensity: 0.7,
         }
     }

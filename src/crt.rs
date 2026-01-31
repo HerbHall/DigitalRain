@@ -64,6 +64,11 @@ impl CrtFilter {
         self.enabled
     }
 
+    /// Set the enabled state directly (used when randomizing config).
+    pub fn set_enabled(&mut self, enabled: bool) {
+        self.enabled = enabled;
+    }
+
     /// Update dimensions after a terminal resize.
     pub fn resize(&mut self, width: u16, height: u16) {
         self.width = width;
@@ -103,14 +108,13 @@ impl CrtFilter {
             return;
         }
 
-        let glow_strength = 0.15 * self.intensity;
+        let glow_strength = 0.07 * self.intensity;
         if glow_strength < 0.001 {
             return;
         }
 
         // Snapshot brightness and fg color for each cell (drops the borrow on buffer
         // so we can mutate it in the second pass).
-        let threshold: u8 = 120;
         let snapshot: Vec<(u8, char, u8, u8, u8)> = buffer
             .cells()
             .iter()
@@ -120,7 +124,10 @@ impl CrtFilter {
             })
             .collect();
 
-        // For each bright cell, add dimmed fg color to neighbors' bg
+        // For each bright cell, add dimmed fg color to neighbors' bg.
+        // High threshold so only the brightest head characters glow,
+        // keeping the body/tail crisp with good contrast.
+        let threshold: u8 = 170;
         for y in 0..h {
             for x in 0..w {
                 let idx = y * w + x;
@@ -392,7 +399,7 @@ mod tests {
         // Check a cardinal neighbor's background got some glow
         let right = buffer.get_cell(3, 2).unwrap();
         let (r, g, _b) = color_to_rgb(right.bg);
-        // Should have green glow added (0.15 * 255 = ~38)
+        // Should have green glow added (0.07 * 255 = ~17)
         assert!(
             g > 0,
             "neighbor bg green should be > 0 from glow, got {}",
@@ -404,7 +411,7 @@ mod tests {
     #[test]
     fn glow_does_not_affect_dim_cells() {
         let mut buffer = ScreenBuffer::new(5, 5);
-        // Place a dim cell (below threshold of 120)
+        // Place a dim cell (below threshold of 170)
         buffer.set_cell(2, 2, 'X', rgb(0, 50, 0), Color::Reset);
 
         let filter = CrtFilter::new(5, 5, true, 1.0);
