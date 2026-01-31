@@ -135,12 +135,23 @@ EFFECTS
        parallax     Multi-layer rain with depth (foreground/background)
 
 COLOR PALETTES
+   Featured (hand-tuned):
        classic      Green phosphor (the Matrix default)
        gold         Warm amber/gold CRT feel
        cyan         Cold ice-blue digital
        red          Crimson danger/alert
-       monochrome   White/grey on black
+       silver       White/grey on black
        purple       Violet synthwave
+       fire         Red/orange/yellow heat gradient
+       ocean        Deep blue/teal aquatic
+       synthwave    Pink/purple/cyan retro neon
+
+   CSS named colors:
+       All 148 CSS Level 4 named colors are available (e.g. coral, tomato,
+       dodgerblue, hotpink, indigo, springgreen). Gradients are auto-generated
+       from the base color. Use --list-colors to see the full list.
+
+       Aliases: monochrome -> silver
 
 CHARACTER SETS
        matrix       Half-width katakana + digits + symbols (film-authentic)
@@ -165,6 +176,12 @@ EXAMPLES
 
        Purple synthwave at 60fps:
               digital_rain --color purple --fps 60
+
+       CSS named color (auto-generated gradient):
+              digital_rain --color coral
+
+       Fire palette, heavy density:
+              digital_rain --color fire --density 2.0
 
        Forward gradient (bright tail at top):
               digital_rain --forward
