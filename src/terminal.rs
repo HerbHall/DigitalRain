@@ -81,7 +81,6 @@ impl Terminal {
             })
         )
     }
-
 }
 
 impl Drop for Terminal {

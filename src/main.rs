@@ -112,7 +112,12 @@ fn main() {
 
                 // Handle interactive key controls (Press only — ignore Release/Repeat
                 // which Windows/crossterm sends and would double-toggle states)
-                if let Event::Key(KeyEvent { code, kind: KeyEventKind::Press, .. }) = event {
+                if let Event::Key(KeyEvent {
+                    code,
+                    kind: KeyEventKind::Press,
+                    ..
+                }) = event
+                {
                     match code {
                         // Pause / Resume
                         KeyCode::Char(' ') => {
@@ -220,18 +225,11 @@ fn main() {
                             auto_cycle_enabled = !auto_cycle_enabled;
                             auto_cycle_elapsed = 0.0;
                             let msg = if auto_cycle_enabled {
-                                format!(
-                                    "Auto-cycle: ON ({:.0}s)",
-                                    auto_cycle_interval.unwrap()
-                                )
+                                format!("Auto-cycle: ON ({:.0}s)", auto_cycle_interval.unwrap())
                             } else {
                                 "Auto-cycle: OFF".to_string()
                             };
-                            set_status(
-                                &mut status_message,
-                                &mut status_frames_remaining,
-                                &msg,
-                            );
+                            set_status(&mut status_message, &mut status_frames_remaining, &msg);
                         }
 
                         // Toggle help overlay
@@ -256,9 +254,7 @@ fn main() {
             effect.update(clock.delta_time());
 
             // Auto-cycle: accumulate time and randomize when interval reached
-            if auto_cycle_enabled
-                && let Some(interval) = auto_cycle_interval
-            {
+            if auto_cycle_enabled && let Some(interval) = auto_cycle_interval {
                 auto_cycle_elapsed += clock.delta_time();
                 if auto_cycle_elapsed >= interval {
                     auto_cycle_elapsed = 0.0;
@@ -278,9 +274,7 @@ fn main() {
                         &mut status_frames_remaining,
                         &format!(
                             "Auto: {} / {} / {:.1}x",
-                            config.effect_name,
-                            config.palette_name,
-                            config.speed_multiplier,
+                            config.effect_name, config.palette_name, config.speed_multiplier,
                         ),
                     );
                 }
