@@ -13,6 +13,7 @@ Features true-color gradient trails, film-authentic katakana characters, gold hi
 - **Multiple color palettes**: Classic green, gold, cyan, red, monochrome, purple
 - **Multiple character sets**: Matrix, ASCII, binary, digits, katakana, latin
 - **Configurable**: Speed, density, FPS, palette, and charset via CLI flags
+- **CRT simulation**: Scanlines, phosphor glow, screen flicker, and noise post-processing
 - **Interactive controls**: Adjust speed, density, and effects in real-time with keyboard
 - **Cross-platform**: Windows Terminal, PowerShell, cmd.exe, Linux, macOS
 
@@ -59,6 +60,8 @@ Press `q`, `Esc`, or `Ctrl+C` to quit. Press `?` while running to show the keybi
 | `--list-charsets` | | List available character sets | |
 | `--random` | | Random effect and parameters | |
 | `--timer <seconds>` | | Auto-cycle to random effect every N seconds | |
+| `--crt` | | Enable CRT monitor simulation | |
+| `--crt-intensity <value>` | | CRT effect intensity (0.0-1.0) | `0.7` |
 | `--help` | `-h` | Show help | |
 | `--version` | `-V` | Show version | |
 
@@ -107,6 +110,15 @@ digital_rain --random
 
 # Auto-cycle: randomize every 30 seconds
 digital_rain --random --timer 30
+
+# CRT monitor simulation (scanlines, glow, flicker, noise)
+digital_rain --crt
+
+# Subtle CRT effect
+digital_rain --crt --crt-intensity 0.3
+
+# Heavy CRT with gold palette
+digital_rain --crt --crt-intensity 1.0 --color gold
 ```
 
 ### Interactive Controls
@@ -123,6 +135,7 @@ While running, use these keys to adjust the rain in real-time:
 | `n` | Next effect |
 | `r` | Randomize (effect, palette, speed) |
 | `t` | Toggle auto-cycle timer (requires `--timer`) |
+| `c` | Toggle CRT simulation on/off |
 | `?` | Toggle keybindings help overlay |
 | `q` / `Esc` | Quit |
 
@@ -130,13 +143,23 @@ Speed and density are clamped to the range 0.1x - 10.0x. Status messages appear 
 
 ## Planned Features
 
-- CRT simulation (scanlines, phosphor glow, flicker)
 - Depth/parallax layers (foreground + background rain at different speeds)
 - Additional effects: cascade, pulse, glitch, binary, fire, ocean
 - TOML configuration file with named presets
 - Effect transitions (smooth crossfade between effects)
 
 ## Version History
+
+### v0.5.0 - CRT Simulation
+- CRT monitor post-processing filter with four sub-effects:
+  - Scanlines: alternate-row dimming for classic CRT look
+  - Phosphor glow: bright cells bleed light to neighboring cells
+  - Screen flicker: dual-sine wave brightness oscillation
+  - Noise: random character corruption for analog feel
+- `--crt` flag to enable CRT simulation at startup
+- `--crt-intensity` to control effect strength (0.0-1.0, default 0.7)
+- `c` key to toggle CRT on/off at runtime
+- CRT applies before overlays so help/status text stays crisp
 
 ### v0.3.1 - Auto-Cycle Timer
 - `--timer <seconds>` flag to auto-randomize effect at a configurable interval

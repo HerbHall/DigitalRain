@@ -36,6 +36,7 @@ src/
   buffer.rs         - 2D cell buffer (char + fg/bg color per cell)
   timing.rs         - Frame timing, FPS control, delta time
   config.rs         - Configuration structs, TOML loading, CLI mapping
+  crt.rs            - CRT monitor simulation post-processing filter
   color/
     mod.rs          - Color types and utilities
     palette.rs      - Named color palettes (classic, gold, custom)
@@ -59,3 +60,5 @@ src/
 - implement tests for debuging
 - Commit to GitHub after successful build.
 - Start a new github branch before implementing new features or making large changes to the core.
+- Please include proper references in the code and support files for sources used in building this project.
+- give credit if we use someone's code or data. 
