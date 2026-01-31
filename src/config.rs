@@ -57,6 +57,14 @@ pub struct Cli {
     /// Forward gradient direction (bright tail at top, dim head at bottom)
     #[arg(long)]
     pub forward: bool,
+
+    /// Enable CRT monitor simulation (scanlines, phosphor glow, flicker, noise)
+    #[arg(long)]
+    pub crt: bool,
+
+    /// CRT effect intensity (0.0 = off, 1.0 = maximum). Default: 0.7
+    #[arg(long, default_value_t = 0.7, value_parser = clap::value_parser!(f64))]
+    pub crt_intensity: f64,
 }
 
 /// Runtime configuration derived from CLI arguments.
@@ -70,6 +78,8 @@ pub struct Config {
     pub target_fps: u32,
     pub auto_cycle_secs: Option<f64>,
     pub forward: bool,
+    pub crt_enabled: bool,
+    pub crt_intensity: f64,
 }
 
 impl Config {
@@ -84,6 +94,8 @@ impl Config {
             target_fps: cli.fps.clamp(10, 120),
             auto_cycle_secs: cli.timer.map(|t| t.max(1.0)),
             forward: cli.forward,
+            crt_enabled: cli.crt,
+            crt_intensity: cli.crt_intensity.clamp(0.0, 1.0),
         }
     }
 
@@ -105,6 +117,8 @@ impl Config {
             target_fps: 30,
             auto_cycle_secs: None,
             forward: false,
+            crt_enabled: false,
+            crt_intensity: 0.7,
         }
     }
 }

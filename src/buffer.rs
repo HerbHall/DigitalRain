@@ -80,8 +80,13 @@ impl ScreenBuffer {
         }
     }
 
+    /// Read-only slice access to all cells (row-major order).
+    /// Used by post-processing filters like CRT simulation.
+    pub fn cells(&self) -> &[Cell] {
+        &self.cells
+    }
+
     /// Get a cell at the given coordinates. Returns None if out of bounds.
-    #[allow(dead_code)] // used in tests
     pub fn get_cell(&self, x: u16, y: u16) -> Option<&Cell> {
         if x < self.width && y < self.height {
             let idx = (y as usize) * (self.width as usize) + (x as usize);

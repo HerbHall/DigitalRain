@@ -49,7 +49,7 @@ pub fn trail_color(
 }
 
 /// Extract RGB components from a Color, defaulting to black.
-fn color_to_rgb(color: Color) -> (u8, u8, u8) {
+pub fn color_to_rgb(color: Color) -> (u8, u8, u8) {
     match color {
         Color::Rgb { r, g, b } => (r, g, b),
         _ => (0, 0, 0),

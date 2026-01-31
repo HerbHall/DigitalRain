@@ -38,6 +38,7 @@ pub fn render_help(buffer: &mut ScreenBuffer) {
         "  n         Next effect",
         "  r         Randomize",
         "  t         Toggle auto-cycle timer",
+        "  c         Toggle CRT simulation",
         "  ?         Toggle this help",
         "  q / Esc   Quit",
         "",

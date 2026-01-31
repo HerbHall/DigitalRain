@@ -38,6 +38,15 @@ OPTIONS
               bottom). Without this flag the default is the classic Matrix
               look with the bright head at the bottom.
 
+   CRT Simulation
+       --crt
+              Enable CRT monitor simulation (scanlines, phosphor glow, screen
+              flicker, and noise). Toggle at runtime with the 'c' key.
+
+       --crt-intensity <INTENSITY>
+              CRT effect intensity. Range: 0.0 (off) to 1.0 (maximum).
+              Default: 0.7
+
    Tuning
        -s, --speed <SPEED>
               Animation speed multiplier. Range: 0.1 (slow) to 10.0 (fast).
@@ -88,6 +97,7 @@ INTERACTIVE CONTROLS
        n            Cycle to the next effect
        r            Randomize effect, palette, charset, speed, and density
        t            Toggle auto-cycle timer on/off (default interval: 30s)
+       c            Toggle CRT simulation on/off
        ?            Toggle keybindings help overlay
        q, Esc       Quit
 
@@ -144,6 +154,15 @@ EXAMPLES
 
        Randomized with forward gradient preserved across cycles:
               digital_rain --random --timer 30 --forward
+
+       CRT monitor simulation:
+              digital_rain --crt
+
+       Subtle CRT effect:
+              digital_rain --crt --crt-intensity 0.3
+
+       Heavy CRT with gold palette:
+              digital_rain --crt --crt-intensity 1.0 --color gold
 
 EXIT STATUS
        0      Normal exit (user pressed q, Esc, or Ctrl+C)

@@ -7,6 +7,7 @@
 mod buffer;
 mod color;
 mod config;
+mod crt;
 mod effects;
 mod overlay;
 mod rain;
@@ -18,6 +19,7 @@ use crossterm::event::{Event, KeyCode, KeyEvent, KeyEventKind};
 
 use buffer::ScreenBuffer;
 use config::{Cli, Config};
+use crt::CrtFilter;
 use effects::registry;
 use terminal::Terminal;
 use timing::FrameClock;
@@ -48,9 +50,14 @@ fn main() {
     }
 
     // Build config from CLI args (or randomize if --random)
+    // When randomizing, carry over CLI flags that shouldn't be randomized
+    // (timer, forward direction, CRT settings).
     let mut config = if cli.random {
         let mut c = Config::randomized();
         c.forward = cli.forward;
+        c.auto_cycle_secs = cli.timer.map(|t| t.max(1.0));
+        c.crt_enabled = cli.crt;
+        c.crt_intensity = cli.crt_intensity.clamp(0.0, 1.0);
         c
     } else {
         Config::from_cli(&cli)
@@ -84,6 +91,14 @@ fn main() {
             registry::create_effect("classic", term.width, term.height, &config).unwrap()
         });
 
+    // CRT simulation filter (post-processing)
+    let mut crt_filter = CrtFilter::new(
+        term.width,
+        term.height,
+        config.crt_enabled,
+        config.crt_intensity,
+    );
+
     // Runtime state
     let mut paused = false;
     let mut show_help = false;
@@ -108,6 +123,7 @@ fn main() {
                     term.update_size().ok();
                     buffer.resize(term.width, term.height);
                     effect.resize(term.width, term.height);
+                    crt_filter.resize(term.width, term.height);
                 }
 
                 // Handle interactive key controls (Press only — ignore Release/Repeat
@@ -232,6 +248,16 @@ fn main() {
                             set_status(&mut status_message, &mut status_frames_remaining, &msg);
                         }
 
+                        // Toggle CRT simulation
+                        KeyCode::Char('c') => {
+                            let on = crt_filter.toggle();
+                            set_status(
+                                &mut status_message,
+                                &mut status_frames_remaining,
+                                if on { "CRT: ON" } else { "CRT: OFF" },
+                            );
+                        }
+
                         // Toggle help overlay
                         KeyCode::Char('?') => {
                             show_help = !show_help;
@@ -284,6 +310,9 @@ fn main() {
         // Render
         buffer.clear();
         effect.render(&mut buffer);
+
+        // CRT post-processing (before overlays so help/status text stays crisp)
+        crt_filter.apply(&mut buffer, clock.delta_time());
 
         // Draw overlays on top of the effect
         if show_help {
