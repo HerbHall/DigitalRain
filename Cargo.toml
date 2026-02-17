@@ -14,7 +14,7 @@ rust-version = "1.85"
 crossterm = "0.28"
 rand = "0.9"
 clap = { version = "4", features = ["derive"] }
-toml = "0.8"
+toml = "1.0"
 serde = { version = "1", features = ["derive"] }
 dirs = "6"
 
