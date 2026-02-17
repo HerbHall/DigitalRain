@@ -1,5 +1,9 @@
 # DigitalRain
 
+[![CI](https://github.com/HerbHall/DigitalRain/actions/workflows/ci.yml/badge.svg)](https://github.com/HerbHall/DigitalRain/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Latest Release](https://img.shields.io/github/v/release/HerbHall/DigitalRain)](https://github.com/HerbHall/DigitalRain/releases/latest)
+
 Terminal-based Matrix digital rain effect built in Rust. Cross-platform with Windows as the primary target.
 
 Features true-color gradient trails, film-authentic katakana characters, gold highlights, character mutation, and a flexible effect system.
@@ -19,6 +23,16 @@ Features true-color gradient trails, film-authentic katakana characters, gold hi
 - **CRT simulation**: Scanlines, phosphor glow, screen flicker, and noise post-processing
 - **Interactive controls**: Adjust speed, density, and effects in real-time with keyboard
 - **Cross-platform**: Windows Terminal, PowerShell, cmd.exe, Linux, macOS
+
+## Screenshots
+
+| Classic green | Fire effect | Purple palette |
+|:---:|:---:|:---:|
+| ![Classic green Matrix rain](assets/screenshots/classic-green.png) | ![Fire cellular automata effect](assets/screenshots/effect-fire.png) | ![Purple palette rain](assets/screenshots/palette-purple.png) |
+
+| Red palette | Gold dense | Gold classic |
+|:---:|:---:|:---:|
+| ![Red palette with ASCII characters](assets/screenshots/palette-red.png) | ![Gold palette with dense rain](assets/screenshots/palette-gold-dense.png) | ![Classic gold rain](assets/screenshots/classic-gold.png) |
 
 ## Installation
 
