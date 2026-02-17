@@ -263,4 +263,4 @@ AUTHORS
        DIGITAL_RAIN_CONFIG
               If set, overrides the default config file path.
 
-digital_rain 0.6.0                 2026                         DIGITAL_RAIN(1)
+digital_rain 0.7.0                 2026                         DIGITAL_RAIN(1)
