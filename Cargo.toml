@@ -1,9 +1,14 @@
 [package]
 name = "digital_rain"
-version = "0.6.0"
+version = "0.7.0"
 edition = "2024"
 description = "Terminal-based Matrix digital rain effect with customizable visuals"
 license = "MIT"
+authors = ["Herb Hall"]
+repository = "https://github.com/HerbHall/DigitalRain"
+homepage = "https://github.com/HerbHall/DigitalRain"
+readme = "README.md"
+rust-version = "1.85"
 
 [dependencies]
 crossterm = "0.28"
