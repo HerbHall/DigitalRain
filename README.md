@@ -36,6 +36,15 @@ Features true-color gradient trails, film-authentic katakana characters, gold hi
 
 ## Installation
 
+### Pre-built binaries
+
+Download the latest release for your platform from the [Releases page](https://github.com/HerbHall/DigitalRain/releases/latest):
+
+- **Windows**: `digital_rain-windows-x86_64.zip`
+- **Linux**: `digital_rain-linux-x86_64.tar.gz`
+
+Extract and run. No dependencies required.
+
 ### From source
 
 Requires [Rust](https://rustup.rs/) 1.85+.
@@ -259,81 +268,22 @@ speed = 1.2
 
 ## Version History
 
-### v0.6.0 - New Effects, Transitions & Config
-- 7 new visual effects:
-  - **binary**: Dense columns of 0s and 1s
-  - **cascade**: Wave-front column spawning, creating a coordinated curtain
-  - **pulse**: Standard rain with sine-wave brightness modulation
-  - **glitch**: Rain with periodic digital corruption (horizontal tears, block corruption, color separation)
-  - **fire**: Classic Doom-style cellular automata fire simulation
-  - **ocean**: Multi-wave water surface with depth shading and foam
-  - **parallax**: Multi-layer rain at different speeds/brightness for depth effect
-- Crossfade transitions: smooth per-cell color blending when switching effects (~0.75s)
-  - Applied to `n` key (next effect), `r` key (randomize), and auto-cycle timer
-- TOML configuration file with named presets:
-  - Platform-native config file location (Windows/Linux/macOS)
-  - `--preset <name>` to load saved configurations
-  - `--save-preset <name>` to save current CLI args as a named preset
-  - `--list-presets` to view available presets
-  - `--config <path>` to use a custom config file path
-  - Priority resolution: CLI > preset > config defaults > hardcoded defaults
-- Dependencies added: `toml`, `serde`, `dirs`
+### v0.7.0 - CSS Colors, CI/CD & Release Automation
 
-### v0.5.0 - CRT Simulation
-- CRT monitor post-processing filter with four sub-effects:
-  - Scanlines: alternate-row dimming for classic CRT look
-  - Phosphor glow: bright cells bleed light to neighboring cells
-  - Screen flicker: dual-sine wave brightness oscillation
-  - Noise: random character corruption for analog feel
-- `--crt` flag to enable CRT simulation at startup
-- `--crt-intensity` to control effect strength (0.0-1.0, default 0.7)
-- `c` key to toggle CRT on/off at runtime
-- CRT included in randomization (~7% chance) for `r` key and auto-cycle timer
-- CRT applies before overlays so help/status text stays crisp
-- Fix: `--timer` and `--crt` flags no longer discarded when combined with `--random`
-
-### v0.4.0 - CSS Color Palettes
 - All 148 CSS Level 4 named colors available as palettes (e.g. `--color coral`)
-- Auto-generated gradients from base color via HSL math
+- Auto-generated gradients from base color via HSL color space math
 - 3 new hand-tuned multi-hue palettes: fire, ocean, synthwave
-- Renamed "monochrome" to "silver" (CSS standard); monochrome kept as alias
-- Grouped `--list-colors` output: featured palettes + CSS colors in columns
-- Total palette count: 150+
+- GitHub Actions CI (Windows + Linux) and automated release workflow
+- Pre-built binaries for Windows and Linux on every release
+- MIT license, CHANGELOG, CONTRIBUTING guide, and issue templates
 
-### v0.3.1 - Auto-Cycle Timer
-- `--timer <seconds>` flag to auto-randomize effect at a configurable interval
-- `t` key to toggle auto-cycle on/off at runtime
-- Timer pauses when animation is paused (Space key)
-- Manual randomize (`r`) resets the timer countdown
+### v0.6.0 - New Effects, Transitions & Config
 
-### v0.3.0 - Interactive Controls & Polish
-- Pause/resume with Space key
-- Runtime speed adjustment with +/- keys (0.2x steps, clamped 0.1-10.0)
-- Runtime density adjustment with [/] keys (0.2x steps, clamped 0.1-10.0)
-- Cycle through effects with `n` key
-- Randomize effect, palette, and speed with `r` key
-- Keybindings help overlay toggled with `?` key
-- Status message overlay for parameter change feedback
-- Terminal resize handling for all controls
+- 7 new visual effects: binary, cascade, pulse, glitch, fire, ocean, parallax
+- Crossfade transitions between effects (~0.75s)
+- TOML configuration file with named presets
 
-### v0.2.0 - CLI & Configuration
-- clap-based CLI argument parsing
-- 6 color palettes: classic, gold, cyan, red, silver (was monochrome), purple
-- 6 character sets: matrix, ascii, binary, digits, katakana, latin
-- Configurable speed, density, and FPS
-- Effect registry with `--list-effects`, `--list-colors`, `--list-charsets`
-- `--random` flag for randomized parameters
-
-### v0.1.0 - Foundation
-- Terminal setup/teardown with alternate screen and raw mode
-- Double-buffered screen rendering with dirty-cell tracking
-- Frame timing loop targeting 30 FPS
-- Classic Matrix rain effect with multi-column rain
-- True-color gradient trails (white-hot head to dark green tail)
-- Half-width katakana + digit + symbol character set
-- Gold highlight characters
-- Character mutation (flickering)
-- Variable column speeds and trail lengths
+See [CHANGELOG.md](CHANGELOG.md) for the full version history.
 
 ## Tech Stack
 
