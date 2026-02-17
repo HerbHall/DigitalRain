@@ -1,6 +1,11 @@
 /target
 **/*.rs.bk
 
+# Build artifacts
+*.exe
+*.zip
+*.tar.gz
+
 # IDE
 .idea/
 .vscode/
