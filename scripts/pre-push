@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Pre-push hook: runs the same checks as CI before allowing a push.
+set -euo pipefail
+
+echo "==> pre-push: running CI checks..."
+
+echo "--- cargo build"
+cargo build
+
+echo "--- cargo test"
+cargo test
+
+echo "--- cargo clippy"
+cargo clippy -- -D warnings
+
+echo "--- cargo fmt check"
+cargo fmt -- --check
+
+echo "--- markdownlint"
+npx --yes markdownlint-cli2 "**/*.md" "#target"
+
+echo "==> pre-push: all checks passed"
