@@ -1,10 +1,12 @@
 # DigitalRain - Project Instructions
 
 ## Overview
+
 Terminal-based Matrix digital rain effect built in Rust using crossterm.
 Classic green phosphor CRT aesthetic with gold highlight characters.
 
 ## Tech Stack
+
 - **Language**: Rust (edition 2024)
 - **Terminal**: crossterm (cross-platform, Windows-first)
 - **CLI**: clap (argument parsing)
@@ -13,25 +15,44 @@ Classic green phosphor CRT aesthetic with gold highlight characters.
 - **Platform**: dirs (platform-native config directory)
 
 ## Architecture
+
 - Effect trait system: each visual effect implements a common `Effect` trait
 - Double-buffered cell grid: compose frame in memory, flush once per frame
 - CLI argument parsing for effect selection and parameter tuning
 - TOML config file support for saving presets
 
 ## Key Design Decisions
+
 - Windows is the primary target; Linux/macOS are secondary
 - True color (24-bit RGB) for smooth gradients; graceful degradation to 256-color
 - Half-width katakana (U+FF66-U+FF9F) for Matrix-authentic characters
 - Single binary distribution (no runtime dependencies)
 
+## Quick Start
+
+```bash
+make hooks          # Install pre-push hook (one-time setup)
+make ci             # Run full CI check locally (fmt + lint + test + build)
+make run            # Run the application
+```
+
 ## Build & Run
+
 ```bash
 cargo build --release
 cargo run -- --help
+make build          # Alias for cargo build --release
+make test           # Alias for cargo test
+make lint           # cargo clippy --all-targets -- -D warnings
+make lint-md        # markdownlint on all .md files
+make lint-all       # lint + lint-md
+make fmt            # cargo fmt check
+make clean          # cargo clean
 ```
 
 ## Project Structure
-```
+
+```text
 src/
   main.rs           - Entry point, CLI args, main loop, crossfade wiring
   terminal.rs       - crossterm setup/teardown, raw mode, alternate screen
@@ -63,13 +84,14 @@ src/
 ```
 
 ## Conventions
+
 - Keep code well-commented (developer is learning Rust)
 - Prefer clarity over cleverness
 - Use `cargo clippy` and `cargo fmt` before committing
-- keep Readme.md file updated for GitHub repo
-- Maintain documentation with version history and updated command usage.
-- implement tests for debuging
-- Commit to GitHub after successful build.
-- Start a new github branch before implementing new features or making large changes to the core.
-- Please include proper references in the code and support files for sources used in building this project.
-- give credit if we use someone's code or data. 
+- Keep README.md updated for GitHub repo
+- Maintain documentation with version history and updated command usage
+- Implement tests for debugging
+- Commit to GitHub after successful build
+- Start a new GitHub branch before implementing new features or making large changes to the core
+- Include proper references in the code and support files for sources used in building this project
+- Give credit if we use someone's code or data
