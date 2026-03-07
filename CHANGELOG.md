@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.7.1](https://github.com/HerbHall/DigitalRain/compare/digital_rain-v0.7.0...digital_rain-v0.7.1) (2026-03-07)
+
+
+### Features
+
+* add GitHub Copilot integration files ([#29](https://github.com/HerbHall/DigitalRain/issues/29)) ([3134fdb](https://github.com/HerbHall/DigitalRain/commit/3134fdbc862347d282275c0d62e82e4dd4337a07))
+
 ## [Unreleased]
 
 ## [0.7.0] - 2026-02-16
