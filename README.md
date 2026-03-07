@@ -65,7 +65,7 @@ cargo run --release
 
 ## Usage
 
-```
+```text
 digital_rain [OPTIONS]
 ```
 
