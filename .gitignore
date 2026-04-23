@@ -9,9 +9,13 @@
 # IDE
 .idea/
 .vscode/
-.claude/
+.claude/*
+!.claude/settings.json
 *.swp
 *.swo
+
+# Dependencies (from npx markdownlint-cli2)
+node_modules/
 
 # OS
 Thumbs.db
