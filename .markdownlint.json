@@ -1,7 +1,4 @@
 {
-  "// NOTE": "Repo-local markdownlint config. Matches the shared style rules used by the workspace.",
-  "// NOTE2": "MD033 allows custom XML tags used in Claude Code skills/agents",
-
   "default": true,
 
   "MD001": true,
