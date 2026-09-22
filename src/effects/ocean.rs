@@ -4,7 +4,7 @@
 //! water surface with depth shading. Blue palette with white foam at crests.
 
 use crossterm::style::Color;
-use rand::Rng;
+use rand::RngExt;
 
 use super::Effect;
 use crate::buffer::ScreenBuffer;

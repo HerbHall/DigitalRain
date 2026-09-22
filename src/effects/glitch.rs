@@ -8,7 +8,7 @@
 //! Inspired by digital signal corruption and VHS tracking errors.
 
 use crossterm::style::Color;
-use rand::Rng;
+use rand::{Rng, RngExt};
 
 use super::Effect;
 use crate::buffer::ScreenBuffer;
