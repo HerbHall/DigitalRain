@@ -349,7 +349,7 @@ impl Config {
 
     /// Create a randomized config.
     pub fn randomized() -> Self {
-        use rand::Rng;
+        use rand::RngExt;
         let mut rng = rand::rng();
 
         let effects = crate::effects::registry::effect_names();

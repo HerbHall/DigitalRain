@@ -4,7 +4,7 @@
 //! Latin letters and digits. We define character pools that effects can
 //! draw from randomly.
 
-use rand::Rng;
+use rand::{Rng, RngExt};
 
 /// Returns the list of available character set names.
 pub fn charset_names() -> &'static [&'static str] {

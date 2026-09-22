@@ -12,11 +12,11 @@ rust-version = "1.85"
 
 [dependencies]
 crossterm = "0.29"
-rand = "0.9"
+rand = "0.10"
 clap = { version = "4", features = ["derive"] }
 toml = "1.0"
 serde = { version = "1", features = ["derive"] }
-dirs = "6"
+dirs = "7"
 
 [profile.release]
 opt-level = 3
