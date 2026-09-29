@@ -3,7 +3,7 @@
 pub mod chars;
 pub mod column;
 
-use rand::Rng;
+use rand::RngExt;
 
 use self::chars::{CharacterPool, charset_by_name};
 use self::column::RainColumn;

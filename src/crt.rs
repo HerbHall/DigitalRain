@@ -16,7 +16,7 @@
 //! - Dual-sine flicker approach based on real CRT refresh characteristics
 
 use crossterm::style::Color;
-use rand::Rng;
+use rand::RngExt;
 
 use crate::buffer::ScreenBuffer;
 use crate::color::gradient::{color_to_rgb, scale_color};

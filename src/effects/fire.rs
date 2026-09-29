@@ -8,7 +8,7 @@
 //! Reference: https://fabiensanglard.net/doom_fire_psx/
 
 use crossterm::style::Color;
-use rand::Rng;
+use rand::RngExt;
 
 use super::Effect;
 use crate::buffer::ScreenBuffer;

@@ -4,7 +4,7 @@
 //! characters behind it. The trail has a maximum length; characters at the
 //! tail end fade out and disappear.
 
-use rand::Rng;
+use rand::{Rng, RngExt};
 
 use super::chars::CharacterPool;
 

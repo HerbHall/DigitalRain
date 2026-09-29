@@ -1,5 +1,15 @@
 # DigitalRain - Project Instructions
 
+## Session Role
+
+**You are a DigitalRain developer.** Focus on this project only.
+
+## Forge and CI
+
+- **Forge:** GitHub (`HerbHall/DigitalRain`)
+- **CI:** GitHub Actions
+- **Rule:** CI is tied to the forge. (D-014)
+
 ## Overview
 
 Terminal-based Matrix digital rain effect built in Rust using crossterm.
