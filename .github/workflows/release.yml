@@ -1,9 +1,27 @@
 name: Release
 
+# Builds binaries and attaches them to an existing GitHub release.
+#
+# Normally called by release-please.yml right after Release Please creates a
+# release. A tag-push trigger can't be used: tags created with GITHUB_TOKEN do
+# not start new workflow runs, so the build would never fire.
+# See: https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
+#
+# Can also be run by hand (Actions > Release > Run workflow) to backfill
+# binaries for a release that is missing them.
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_call:
+    inputs:
+      tag:
+        description: Release tag to build and upload to (e.g. digital_rain-v0.7.1)
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to build and upload to (e.g. digital_rain-v0.7.1)
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -29,6 +47,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag }}
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -67,22 +87,22 @@ jobs:
             ${{ matrix.archive }}.sha256
 
   release:
-    name: Create Release
+    name: Upload Release Assets
     needs: build
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v7
-
       - name: Download all artifacts
         uses: actions/download-artifact@v8
         with:
           path: artifacts
 
-      - name: Create GitHub Release
+      # Release Please already created the release and wrote its notes, so
+      # this step only uploads files to it (existing notes are kept).
+      - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v3
         with:
-          generate_release_notes: true
+          tag_name: ${{ inputs.tag }}
           files: |
             artifacts/**/*.zip
             artifacts/**/*.tar.gz
