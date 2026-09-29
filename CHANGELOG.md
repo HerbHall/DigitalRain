@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.7.2](https://github.com/HerbHall/DigitalRain/compare/digital_rain-v0.7.1...digital_rain-v0.7.2) (2026-09-29)
+
+
+### Bug Fixes
+
+* **ci:** release binaries from release-please; make markdownlint lint ([#61](https://github.com/HerbHall/DigitalRain/issues/61)) ([dbba35f](https://github.com/HerbHall/DigitalRain/commit/dbba35f8dc30c2b148aa7425bbc6be65e282a1e9))
+* **ci:** upload release assets with gh instead of softprops ([#63](https://github.com/HerbHall/DigitalRain/issues/63)) ([b018de3](https://github.com/HerbHall/DigitalRain/commit/b018de33d453f06c7c9cbe0d913e0fa15de65eb2))
+
 ## [0.7.1](https://github.com/HerbHall/DigitalRain/compare/digital_rain-v0.7.0...digital_rain-v0.7.1) (2026-09-29)
 
 
