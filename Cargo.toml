@@ -1,6 +1,6 @@
 [package]
 name = "digital_rain"
-version = "0.7.0"
+version = "0.7.1"
 edition = "2024"
 description = "Terminal-based Matrix digital rain effect with customizable visuals"
 license = "MIT"
