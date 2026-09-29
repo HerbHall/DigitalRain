@@ -10,7 +10,7 @@ lint:
 	cargo clippy --all-targets -- -D warnings
 
 lint-md:
-	npx --yes markdownlint-cli2 "**/*.md" "#target" "#node_modules" "#*/node_modules" "#.git"
+	npx --yes markdownlint-cli2 "**/*.md" "#target" "#node_modules" "#*/node_modules" "#.git" "#CHANGELOG.md"
 
 lint-all: lint lint-md
 
