@@ -36,7 +36,16 @@
       "Skill",
       "WebFetch",
       "WebSearch",
-      "mcp__*"
+      "mcp__MCP_DOCKER__*",
+      "mcp__sqlite__*",
+      "mcp__memory__*",
+      "mcp__synapset__*",
+      "mcp__samverk__*",
+      "mcp__sequential-thinking__*",
+      "mcp__context7__*",
+      "mcp__ms365-onenote__*",
+      "mcp__claude_ai_Cloudflare_Developer_Platform__*",
+      "mcp__claude_ai_Microsoft_Learn__*"
     ],
     "deny": [
       "Bash(rm -rf /)"
