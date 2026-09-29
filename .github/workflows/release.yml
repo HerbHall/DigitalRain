@@ -98,12 +98,16 @@ jobs:
           path: artifacts
 
       # Release Please already created the release and wrote its notes, so
-      # this step only uploads files to it (existing notes are kept).
+      # this step only uploads files to it. `gh release upload` never edits
+      # the release itself. (softprops/action-gh-release also updates the
+      # release's target to the triggering ref, which GitHub rejects when that
+      # ref has different workflow files than the tag and the token lacks the
+      # `workflows` permission, which GITHUB_TOKEN can never have.)
+      # --clobber replaces same-named assets so re-runs are safe.
       - name: Upload to GitHub Release
-        uses: softprops/action-gh-release@v3
-        with:
-          tag_name: ${{ inputs.tag }}
-          files: |
-            artifacts/**/*.zip
-            artifacts/**/*.tar.gz
-            artifacts/**/*.sha256
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber \
+            artifacts/*/*.zip artifacts/*/*.tar.gz artifacts/*/*.sha256
